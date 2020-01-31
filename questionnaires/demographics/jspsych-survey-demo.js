@@ -77,7 +77,7 @@ jsPsych.plugins['survey-demo'] = (function() {
     				<div class="demo-resp">
     						<label><input type="radio" name="ethnicity" value="Hispanic or Latino" required>Hispanic or Latino</label><br>
     						<label><input type="radio" name="ethnicity" value="Not Hispanic or Latino" required>Not Hispanic or Latino</label><br>
-    						<label><input type="radio" name="ethnicity" value="Unkown" required>Unknown</label><br>
+    						<label><input type="radio" name="ethnicity" value="Unknown" required>Unknown</label><br>
     						<label><input type="radio" name="ethnicity" value="Rather not say" required>Rather not say</label>
     				</div>
 
