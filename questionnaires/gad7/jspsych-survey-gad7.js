@@ -43,7 +43,7 @@ jsPsych.plugins['survey-gad7'] = (function() {
     ];
 
     // Define gad7 response scale.
-    var scale = ["Not at<br>all sure",
+    var scale = ["Not at<br>all",
                  "Several<br>days",
                  "Over half<br>the days",
                  "Nearly<br>every day"];
