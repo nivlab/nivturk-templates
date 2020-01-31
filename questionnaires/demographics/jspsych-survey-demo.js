@@ -152,24 +152,36 @@ jsPsych.plugins['survey-demo'] = (function() {
         // Wait for response
         event.preventDefault();
 
-        // Measure response time
-        var endTime = performance.now();
-        var response_time = endTime - startTime;
+        // verify that at least one box has been checked for the race question
+        var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        var checkedOne = Array.prototype.slice.call(checkboxes).some(x => x.checked);
 
-        var question_data = serializeArray(this);
-        question_data = objectifyForm(question_data);
+        if(!checkedOne){
 
-        // Store data
-        var trialdata = {
-          "rt": response_time,
-          "demographics": question_data
-        };
+          alert("You did not enter a response for the question \"What is your race?\". Please choose at least one option.");
 
-        // Update screen
-        display_element.innerHTML = '';
+        } else {
 
-        // Move onto next trial
-        jsPsych.finishTrial(trialdata);
+          // Measure response time
+          var endTime = performance.now();
+          var response_time = endTime - startTime;
+
+          var question_data = serializeArray(this);
+          question_data = objectifyForm(question_data);
+
+          // Store data
+          var trialdata = {
+            "rt": response_time,
+            "demographics": question_data
+          };
+
+          // Update screen
+          display_element.innerHTML = '';
+
+          // Move onto next trial
+          jsPsych.finishTrial(trialdata);
+
+        }
 
     });
 
