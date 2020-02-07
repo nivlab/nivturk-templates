@@ -61,6 +61,9 @@ jsPsych.plugins['survey-gad7'] = (function() {
     // Define survey HTML.
     //---------------------------------------//
 
+    // scroll to top of screen
+    window.scrollTo(0,0);
+
     // Initialize HTML
     var html = '';
 

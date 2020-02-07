@@ -75,6 +75,9 @@ jsPsych.plugins['survey-acqr'] = (function() {
     // Define survey HTML.
     //---------------------------------------//
 
+    // scroll to top of screen
+    window.scrollTo(0,0);
+
     // Initialize HTML
     var html = '';
 
