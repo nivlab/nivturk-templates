@@ -27,6 +27,23 @@ jsPsych.plugins['survey-demo'] = (function() {
     // Initialize HTML
     var html = '';
 
+    // Inject CSS
+    html += '<style>';
+    html += '.demo-header { margin: auto; top: 5%; width: 100%; padding: 0 0 0 0; background-color: #fff; font-size: 90%; text-align: center; }'+
+      '.demo-footer { margin: auto; top: 95%; width: 100%; padding: 0 0 0 0; background-color: #fff; text-align: right; }'+
+      'input[type=text], select, textarea{ border: 1px solid #ccc; border-radius: 4px; }'+
+      'input[type=number], select, textarea{ padding: 4px 12px; border: 1px solid #ccc; border-radius: 4px; width: 60px; }'+
+      'input[type="radio"] { margin: 0 6px 0 0; }'+
+      'input[type="checkbox"] { margin: 0 6px 0 0; }'+
+      'label { padding: 0 8px 0 0; display: inline-block; }'+
+      '.demo-footer input[type=submit] { background-color: #ffb347; color: white; padding: 8px 20px; border: none; border-radius: 4px; float: right; margin-top: 2px; margin-right: -15px; margin-bottom: 20px; }'+
+      '.container { margin: auto; width: 100%; background-color: #F8F8F8; padding: 5px 0 5px 15px; border-radius: 5px; }'+
+      '.demo-prompt { float: left; width: 33%; margin-top: 6px; margin-bottom: 6px; font-size: 90%; text-align: left; }'+
+      '.demo-resp { float: left; width: 66%; margin-top: 6px; margin-bottom: 6px; font-size: 85%; text-align: left; }'+
+      '.row:after { content: ""; display: table; clear: both; }'+
+      '@media screen and (max-width: 600px) { .demo-prompt, .demo-resp, input[type=submit] { width: 100%; margin-top: 0; } }';
+    html += '</style>';
+
     // Add header
     html += `
     <div class=demo-header><h2>Demographics Survey</h2>

@@ -74,6 +74,91 @@ jsPsych.plugins['survey-7up7down'] = (function() {
     // Initialize HTML
     var html = '';
 
+    // Insert CSS
+    html += `<style>
+    .seven_up_seven_down-container {
+      margin: auto;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 42% 14.5% 14.5% 14.5% 14.5%;
+      grid-template-rows: auto;
+      background-color: #F8F8F8;
+      border-radius: 5px;
+    }
+
+    .row-wrapper {
+      display: contents;
+    }
+
+    .row-wrapper:hover div {
+      background-color: #dee8eb;
+    }
+
+    .seven_up_seven_down-header {
+      padding: 18px 0 0px 0;
+      text-align: center;
+      font-size: 13px;
+      line-height: 1.15em;
+    }
+
+    .seven_up_seven_down-prompt {
+      padding: 12px 0 12px 15px;
+      text-align: left;
+      font-size: 14px;
+      line-height: 1.15em;
+      justify-items: center;
+    }
+
+    .seven_up_seven_down-resp {
+      padding: 12px 0 12px 0;
+      font-size: 12px;
+      text-align: center;
+      line-height: 1.15em;
+      justify-items: center;
+    }
+
+    .seven_up_seven_down-resp input {
+      position: relative;
+    }
+
+    .seven_up_seven_down-resp input:after {
+        display: block;
+        content: " ";
+        position: absolute;
+        bottom: 6px;
+        background: #d8dcd6;
+        height: 2px;
+        left: 13px;
+        width: 96px;
+    }
+
+    .seven_up_seven_down-resp:last-child input:after {
+      display: none;
+    }
+
+    .seven_up_seven_down-footer {
+        margin: auto;
+        top: 95%;
+        width: 100%;
+        padding: 0 0 0 0;
+        background-color: #fff;
+        text-align: right;
+    }
+
+    /* Style the submit button */
+    .seven_up_seven_down-footer input[type=submit] {
+      background-color: #F0F0F0;
+      color: black;
+      padding: 8px 20px;
+      border: none;
+      border-radius: 4px;
+      float: center;
+      margin-top: 5px;
+      margin-bottom: 20px;
+      margin-right: 0px;
+    }
+    </style>`;
+
     // Add instructions.
     html += '<p style="font-size:17px;">Below are some questions about behaviors that occur in the general population.<br>Using the scale below, select the number that best describes how often you experience these behaviors.<p>';
 

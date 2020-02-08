@@ -81,6 +81,81 @@ jsPsych.plugins['survey-acqr'] = (function() {
     // Initialize HTML
     var html = '';
 
+    // Insert CSS
+    html += `<style>
+    .acqr-container {
+      margin: auto;
+      width: 80%;
+      display: grid;
+      grid-template-columns: 50% 8% 8% 8% 8% 8% 8%;
+      grid-template-rows: auto;
+      background-color: #F8F8F8;
+      border-radius: 5px;
+    }
+    .row-wrapper {
+      display: contents;
+    }
+    .row-wrapper:hover div {
+      background-color: #dee8eb;
+    }
+    .acqr-header {
+      padding: 18px 0 0px 0;
+      text-align: center;
+      font-size: 13px;
+      line-height: 1.15em;
+    }
+    .acqr-prompt {
+      padding: 12px 0 12px 15px;
+      text-align: left;
+      font-size: 14px;
+      line-height: 1.15em;
+      justify-items: center;
+    }
+    .acqr-resp {
+      padding: 12px 0 12px 0;
+      font-size: 12px;
+      text-align: center;
+      line-height: 1.15em;
+      justify-items: center;
+    }
+    .acqr-resp input {
+      position: relative;
+    }
+    .acqr-resp input:after {
+        display: block;
+        content: " ";
+        position: absolute;
+        bottom: 6px;
+        background: #d8dcd6;
+        height: 2px;
+        left: 13px;
+        width: 96px;
+    }
+    .acqr-resp:last-child input:after {
+      display: none;
+    }
+    .acqr-footer {
+        margin: auto;
+        top: 95%;
+        width: 100%;
+        padding: 0 0 0 0;
+        background-color: #fff;
+        text-align: right;
+    }
+    /* Style the submit button */
+    .acqr-footer input[type=submit] {
+      background-color: #F0F0F0;
+      color: black;
+      padding: 8px 20px;
+      border: none;
+      border-radius: 4px;
+      float: center;
+      margin-top: 5px;
+      margin-bottom: 20px;
+      margin-right: 0px;
+    }
+    </style>`;
+
     // Add instructions.
     html += '<p style="font-size:17px;">Please read each statement below carefully and indicate how much you think each statement is typical of you.<p>';
 
