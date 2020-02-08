@@ -1,4 +1,4 @@
-# ius12
+# 7-up 7-down
 
 jsPsych code for the 7-up 7-down questionnaire, a shortened variant of the General Behavior Inventory designed to maximise the separability of depression and hypomania scales.
 
