@@ -1,4 +1,4 @@
-# ius12
+# panas
 
 jsPsych code for the Positive and Negative Affect Schedule (PANAS).
 
