@@ -1,10 +1,9 @@
 /**
- * jspsych-audio-button-response
- * Kristin Diep
+ * audio-test
+ * Daniel Bennett
  *
- * plugin for playing an audio file and getting a keyboard response
- *
- * documentation: docs.jspsych.org
+ * plugin for playing an audio file, getting a text response, and verifying that it is correct
+ * made by playing with jspsych template plugins 
  *
  **/
 
