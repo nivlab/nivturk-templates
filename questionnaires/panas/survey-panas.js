@@ -1,6 +1,6 @@
 /**
  * survey-panas
- * a jspsych plugin for the GAD-7
+ * a jspsych plugin for the PANAS
  */
 
 jsPsych.plugins['survey-panas'] = (function() {

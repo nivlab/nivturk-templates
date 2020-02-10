@@ -1,6 +1,6 @@
 /**
  * survey-7up7down
- * a jspsych plugin for the GAD-7
+ * a jspsych plugin for the 7up-7down
  */
 
 jsPsych.plugins['survey-7up7down'] = (function() {
