@@ -3,7 +3,7 @@
  * Daniel Bennett
  *
  * plugin for playing an audio file, getting a text response, and verifying that it is correct
- * made by playing with jspsych template plugins 
+ * made by playing with jspsych template plugins
  *
  **/
 
@@ -36,12 +36,6 @@ jsPsych.plugins["audio-test"] = (function() {
 				array: true,
 				description: 'The button labels.'
 			},
-      trial_duration: {
-        type: jsPsych.plugins.parameterType.INT,
-        pretty_name: 'Trial duration',
-        default: null,
-        description: 'The maximum duration to wait for a response.'
-      },
       margin_vertical: {
         type: jsPsych.plugins.parameterType.STRING,
         pretty_name: 'Margin vertical',
@@ -53,13 +47,7 @@ jsPsych.plugins["audio-test"] = (function() {
         pretty_name: 'Margin horizontal',
         default: '8px',
         description: 'Horizontal margin of button.'
-      },
-      begin_prompt: {
-        type: jsPsych.plugins.parameterType.STRING,
-        pretty_name: 'Prompt',
-        default: null,
-        description: 'We will now test your audio. When you press the button below, you will hear a word being spoken.<br><br>On the following screen, we will ask you to tell us what word you heard. This allows us to verify that your audio is working.'
-      },
+      }, 
       prompt: {
         type: jsPsych.plugins.parameterType.STRING,
         pretty_name: 'Prompt',
