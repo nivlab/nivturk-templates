@@ -81,7 +81,6 @@ jsPsych.plugins['survey-demo'] = (function() {
                 <label><input type="radio" name="gender-categorical" value="Female" required>Female</label>
                 <label><input type="radio" name="gender-categorical" value="Rather not say" required>Rather not say</label>
                 <label><input type="radio" name="gender-categorical" value="Other" required>Other</label>
-    						<input type="text" name="gender-free-response" maxlength="16" size="10"></label>
     				</div>
 
     		</div>
@@ -153,6 +152,20 @@ jsPsych.plugins['survey-demo'] = (function() {
     				</div>
 
     		</div>
+
+        <hr color="#fff">
+
+        <div class="row">
+
+            <div class="demo-prompt">
+                <label for="feedback">Do you have any other comments?<br><br><small>If you experienced any technical problems, please report them here.</small></label>
+            </div>
+
+            <div class="demo-resp">
+                <input type="text" name="feedback" size="40">
+            </div>
+        </div>
+
     </div>`
 
     // Add submit button
@@ -202,6 +215,8 @@ jsPsych.plugins['survey-demo'] = (function() {
           jsPsych.finishTrial(trialdata);
 
         }
+
+
 
     });
 
