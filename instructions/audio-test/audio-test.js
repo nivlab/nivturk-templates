@@ -47,7 +47,7 @@ jsPsych.plugins["audio-test"] = (function() {
         pretty_name: 'Margin horizontal',
         default: '8px',
         description: 'Horizontal margin of button.'
-      }, 
+      },
       prompt: {
         type: jsPsych.plugins.parameterType.STRING,
         pretty_name: 'Prompt',
@@ -137,7 +137,7 @@ jsPsych.plugins["audio-test"] = (function() {
     function check_response(){
 
       var input_val = document.getElementById("word_response").value;
-      if (input_val.toUpperCase() === trial.correct_responses[audio_ix].toUpperCase()){
+      if (input_val.toUpperCase().trim() === trial.correct_responses[audio_ix].toUpperCase()){
         end_trial();
       } else {
         alert('Sorry, that response is incorrect. Please try again or return the HIT.')
