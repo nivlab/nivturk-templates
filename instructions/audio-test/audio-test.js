@@ -7,6 +7,11 @@
  *
  **/
 
+
+ 	function noenter() {
+	  return !(window.event && window.event.keyCode == 13);
+	}
+
 jsPsych.plugins["audio-test"] = (function() {
 	var plugin = {};
 
@@ -72,7 +77,7 @@ jsPsych.plugins["audio-test"] = (function() {
     }
 
     // display stimulus
-    var html = '<div id="jspsych-html-button-response-stimulus">We will now test your audio. When you press the button below, you will hear a word being spoken.<br><br>On the following screen, we will ask you to tell us what word you heard. This allows us to verify that your audio is working. </div>';
+    var html = '<div id="jspsych-html-button-response-stimulus">In order to complete this HIT, you will need to have your computer audio on. If you do not have computer audio, you will not be able to complete this HIT.<br><br>We will now test your audio. When you press the button below, you will hear a word being spoken.<br><br>On the following screen, we will ask you to tell us what word you heard. This allows us to verify that your audio is working. </div>';
 
     //display buttons
     str = '<button class="jspsych-btn">Continue</button>';
@@ -95,7 +100,7 @@ jsPsych.plugins["audio-test"] = (function() {
 
     function do_audio_test() {
 
-      html = '<form>Please enter the word that you heard in the box below.<br>(HINT: it is a type of animal)<br><br><input type="text" name="response", id="word_response"></form><br><br>'
+      html = '<form>Please type the word that you heard in the box below.<br>(HINT: it is a type of animal)<br><br><input type="text" name="response", id="word_response", style="border:2px solid black;" onkeypress="return noenter()"></form><br><br>'
 
       //display buttons
       var buttons = [];
