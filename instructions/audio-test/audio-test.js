@@ -126,7 +126,12 @@ jsPsych.plugins["audio-test"] = (function() {
       var start_time = performance.now();
 
       // start audio
-      audio.play();
+      if(context !== null){
+        startTime = context.currentTime;
+        source.start(startTime);
+      } else {
+        audio.play();
+      }
 
       // add event listeners to buttons
       display_element.querySelector('#jspsych-audio-button-response-button-0').addEventListener('click', function(e){
@@ -134,7 +139,16 @@ jsPsych.plugins["audio-test"] = (function() {
       });
 
       display_element.querySelector('#jspsych-audio-button-response-button-1').addEventListener('click', function(e){
-        audio.play();
+        // start audio
+        if(context !== null){
+          var source = context.createBufferSource();
+          source.buffer = jsPsych.pluginAPI.getAudioBuffer(trial.stimulus[audio_ix]);
+          source.connect(context.destination);
+          startTime = context.currentTime;
+          source.start(startTime);
+        } else {
+          audio.play();
+        };
       });
 
     };
