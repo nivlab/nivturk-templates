@@ -54,10 +54,10 @@ jsPsych.plugins['survey-bisbas'] = (function() {
     // Define bis_bas response scale.
     var scale = [
 
-       "Very false<br>for me",               // scored as 1
-       "Somewhat false<br>for me",           // scored as 2
-       "Somewhat true<br>for me",            // scored as 3
-       "Very true<br>for me"                 // scored as 4
+       "Very false<br>for me",               // scored as 0
+       "Somewhat false<br>for me",           // scored as 1
+       "Somewhat true<br>for me",            // scored as 2
+       "Very true<br>for me"                 // scored as 3
 
      ];
 

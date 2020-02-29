@@ -1,4 +1,4 @@
-# lsas
+# BIS/BAS
 
 jsPsych code for the BIS/BAS scale (Carver & White, 1994) in the shortened version as per the recommendations of Pagliacco et al., 2016 (12 items, 3 subscales).
 
