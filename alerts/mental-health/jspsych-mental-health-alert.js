@@ -39,11 +39,11 @@ jsPsych.plugins["mental-health-alert"] = (function() {
     a:link {
       color: #29a3a3;
     }
-    .wrap {
+    .mental-health-wrap {
       height: 100vh;
       width: 100vw;
     }
-    .container {
+    .mental-health-container {
       position: absolute;
       top: 50%;
       left: 50%;
@@ -55,10 +55,10 @@ jsPsych.plugins["mental-health-alert"] = (function() {
       font-size: 2.5vh;
       line-height: 3.5vh;
     }
-    .container li {
+    .mental-health-container li {
       margin: 0.7em 0;
     }
-    .container input[type=submit] {
+    .mental-health-container input[type=submit] {
       background-color: #F0F0F0;
       color: black;
       padding: 8px 20px;
@@ -69,8 +69,8 @@ jsPsych.plugins["mental-health-alert"] = (function() {
     }
     </style>`
 
-    // Initialize container.
-    html += '<div class="wrap"><div class="container">';
+    // Initialize mental-health-container.
+    html += '<div class="mental-health-wrap"><div class="mental-health-container">';
 
     // Add paragraph 1.
     html += '<h3>Thank you for your honesty.</h3>'
