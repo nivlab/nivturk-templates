@@ -28,9 +28,6 @@ jsPsych.plugins["mental-health-alert"] = (function() {
     // Section 1: Define HTML             //
     // ---------------------------------- //
 
-    // scroll to top of screen
-    window.scrollTo(0,0);
-
     // Define HTML
     var html = '';
 
@@ -47,13 +44,13 @@ jsPsych.plugins["mental-health-alert"] = (function() {
       position: absolute;
       top: 50%;
       left: 50%;
-      height: 75vh;
-      width: 60vw;
+      height: 80vh;
+      width: 70vw;
       -webkit-transform: translate3d(-50%, -50%, 0);
       transform: translate3d(-50%, -50%, 0);
       text-align: left;
-      font-size: 2.5vh;
-      line-height: 3.5vh;
+      font-size: 1.33vw;
+      line-height: 1.5vw;
     }
     .mental-health-container li {
       margin: 0.7em 0;
@@ -64,7 +61,7 @@ jsPsych.plugins["mental-health-alert"] = (function() {
       padding: 8px 20px;
       border: none;
       border-radius: 4px;
-      font-size: 2.25vh;
+      font-size: 1.15vw;
       margin: 1.5vh 0 0 0;
     }
     </style>`
@@ -74,6 +71,7 @@ jsPsych.plugins["mental-health-alert"] = (function() {
 
     // Add paragraph 1.
     html += '<h3>Thank you for your honesty.</h3>'
+    html += '<hr>';
     html += '<p>As a reminder, your responses to the questionnaires will remain strictly anonymous. Your identity is not known to the experimenters.</p>'
 
     // Add paragraph 2.
@@ -85,8 +83,8 @@ jsPsych.plugins["mental-health-alert"] = (function() {
     html += '<li>If the questions you answered trouble you in any way, we urge you to arrange a timely appointment with your physician, clinical psychologist or psychiatrist.</li>';
     html += '<li>For help finding a mental health professional, you can visit <a href="https://www.nami.org/Find-Support/Living-with-a-Mental-Health-Condition/Finding-a-Mental-Health-Professional" target="_blank">NAMI resources page</a>, and/or email <a href="mailto:info@nami.org" target="_blank">info@nami.org</a> for more specific or personal concerns.</li>';
     html += '<li>A number of organizations offer support during difficult times. Below we have listed some examples of these free and confidential support networks:<ul>';
-    html += '<li style="font-size: 2.4vh; margin: 0.3em 0 0 0">The <a href="http://www.contact-usa.org/chat.html" target="_blank">Lifeline Crisis chat</a></li>';
-    html += '<li style="font-size: 2.4vh; margin: 0.3em 0 0 0">The <a href="http://suicidepreventionlifeline.org" target="_blank">National Suicide Prevention Hotline</a> (or call: 1-800-273-8255)</li>';
+    html += '<li style="font-size: 1.25vw; margin: 0.3em 0 0 0">The <a href="http://www.contact-usa.org/chat.html" target="_blank">Lifeline Crisis chat</a></li>';
+    html += '<li style="font-size: 1.25vw; margin: 0.3em 0 0 0">The <a href="http://suicidepreventionlifeline.org" target="_blank">National Suicide Prevention Hotline</a> (or call: 1-800-273-8255)</li>';
     html += '</ul></ul>';
 
     // Begin form.
@@ -98,17 +96,17 @@ jsPsych.plugins["mental-health-alert"] = (function() {
     // End form
     html += '</form></div></div>';
 
-
-// The Lifeline Crisis chat (http://www.crisischat.org).
-// The National Suicide Prevention Hotline (http://suicidepreventionlifeline.org, call:1-800-273-8255)
-
-
     // Display HTML.
     display_element.innerHTML = html;
 
     //---------------------------------------//
     // Response handling.
     //---------------------------------------//
+
+    // Scroll to top of screen.
+    window.onbeforeunload = function () {
+      window.scrollTo(0, 0);
+    }
 
     display_element.querySelector('#jspsych-mental-health-alert').addEventListener('submit', function(event) {
 
