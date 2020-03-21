@@ -1,6 +1,6 @@
 /**
- * jspsych-survey-sds
- * a jspsych plugin for the sds
+ * survey-sds
+ * a jspsych plugin for the Zung Self-Rating Depression Scale (SDS)
  */
 
 jsPsych.plugins['survey-sds'] = (function() {
@@ -17,6 +17,18 @@ jsPsych.plugins['survey-sds'] = (function() {
         default: true,
         description: 'If true, the order of the questions will be randomized'
       },
+      scale_repeat: {
+        type: jsPsych.plugins.parameterType.INT,
+        pretty_name: 'Scale repeat',
+        default: 7,
+        description: 'The number of items before the scale repeats'
+      },
+      row_prompt_percent: {
+        type: jsPsych.plugins.parameterType.INT,
+        pretty_name: 'Row prompt percent',
+        default: 40,
+        description: 'The percentage of a row the item prompt should occupy'
+      },
       button_label: {
         type: jsPsych.plugins.parameterType.STRING,
         pretty_name: 'Button label',
@@ -28,10 +40,10 @@ jsPsych.plugins['survey-sds'] = (function() {
   plugin.trial = function(display_element, trial) {
 
     //---------------------------------------//
-    // Define sds questionnaire.
+    // Define questionnaire.
     //---------------------------------------//
 
-    // Define sds items.
+    // Define items.
     var items = [
       "I feel down-hearted and blue.",
       "Morning is when I feel the best.",
@@ -55,171 +67,171 @@ jsPsych.plugins['survey-sds'] = (function() {
       "I still enjoy the things I used to do."
     ];
 
-    // Define sds response scale.
-    var scale = ["A little of<br>the time", "Some of<br>the time", "Good part of<br>the time", "Most of<br>the time"]
+    // Define response scale.
+    var scale = [
+      "A little of<br>the time",
+      "Some of<br>the time",
+      "Good part of<br>the time",
+      "Most of<br>the time"
+    ]
 
-   // Define reverse scoring.
-   var reverse = [false, true, false, false, true, true, false, false, false, false, true, true, false, true, false, true, true, true, false, true];
+    // Define reverse scoring.
+    var reverse = [false, true, false, false, true, true, false, false,
+                   false, false, true, true, false, true, false, true,
+                   true, true, false, true];
 
-    // Randomize question order.
-    var item_order = [];
-    for(var i=0; i<items.length; i++){
-       item_order.push(i);
-    }
-    if(trial.randomize_question_order){
-       item_order = jsPsych.randomization.shuffle(item_order);
-    }
+    // Define instructions.
+    var instructions = 'For each item below, please select the answer which best describes how often you felt or behaved<br>this way <b>during the past several days.</b>';
 
     //---------------------------------------//
     // Define survey HTML.
     //---------------------------------------//
 
-    // scroll to top of screen
-    window.scrollTo(0,0);
-
     // Initialize HTML
     var html = '';
 
+    // Define CSS constants
+    const n  = scale.length;
+    const x1 = trial.row_prompt_percent;
+    const x2 = (100 - trial.row_prompt_percent) / n;
+
     // Insert CSS
     html += `<style>
-
-    .sds-container {
-      margin: auto;
-      width: 100%;
-      display: grid;
-      grid-template-columns: 40% 15% 15% 15% 15%;
-      grid-template-rows: auto;
-      background-color: #F8F8F8;
-      border-radius: 5px;
+    .survey-sds-wrap {
+      height: 100vh;
+      width: 100vw;
     }
-
-    .row-wrapper {
+    .survey-sds-instructions {
+      width: 70vw;
+      margin: auto;
+      font-size: 1.25vw;
+      line-height: 1.5em;
+    }
+    .survey-sds-container {
+      display: grid;
+      grid-template-columns: ${x1}% repeat(${n}, ${x2}%);
+      grid-template-rows: auto;
+      width: 70vw;
+      margin: auto;
+      background-color: #F8F8F8;
+      border-radius: 8px;
+    }
+    .survey-sds-row {
       display: contents;
     }
-
-    .row-wrapper:hover div {
+    .survey-sds-row:hover div {
       background-color: #dee8eb;
     }
-
-    .sds-header {
+    .survey-sds-header {
       padding: 18px 0 0px 0;
       text-align: center;
-      font-size: 13px;
+      font-size: 1vw;
       line-height: 1.15em;
     }
-
-    .sds-prompt {
+    .survey-sds-prompt {
       padding: 12px 0 12px 15px;
       text-align: left;
-      font-size: 14px;
+      font-size: 1.15vw;
       line-height: 1.15em;
       justify-items: center;
     }
-
-    .sds-resp {
+    .survey-sds-response {
       padding: 12px 0 12px 0;
       font-size: 12px;
       text-align: center;
       line-height: 1.15em;
       justify-items: center;
     }
-
-    .sds-resp input {
+    .survey-sds-response input[type='radio'] {
       position: relative;
     }
-
-    .sds-resp input:after {
-        display: block;
-        content: " ";
-        position: absolute;
-        bottom: 6px;
-        background: #d8dcd6;
-        height: 2px;
-        left: 13px;
-        width: 140px;
+    .survey-sds-response input[type='radio']::after {
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      height: 2px;
+      width: calc(70vw * ${x2 / 100} - 100%);
+      background: #d8dcd6;
+      content: "";
     }
-
-    .sds-resp:last-child input:after {
+    .survey-sds-response:last-child input[type='radio']::after {
       display: none;
     }
-
-    .sds-footer {
-        margin: auto;
-        top: 95%;
-        width: 100%;
-        padding: 0 0 0 0;
-        background-color: #fff;
-        text-align: right;
+    .survey-sds-footer {
+      margin: auto;
+      width: 70vw;
+      padding: 0 0 0 0;
+      text-align: right;
     }
-
-    /* Style the submit button */
-    .sds-footer input[type=submit] {
+    .survey-sds-footer input[type=submit] {
       background-color: #F0F0F0;
-      color: black;
       padding: 8px 20px;
       border: none;
       border-radius: 4px;
-      float: center;
       margin-top: 5px;
       margin-bottom: 20px;
       margin-right: 0px;
+      font-size: 1vw;
+      color: black;
     }
-
     </style>`;
 
-    // Begin form.
-    html += '<form id="jspsych-survey-sds">';
+    // Initialize survey.
+    html += '<div class="survey-sds-wrap"><form id="survey-sds-submit">';
 
     // Add instructions.
-    html += '<p style="font-size:16px; width: 80vw;">For each item below, please select the answer which best describes how often you felt or behaved this way during the past several days.<p>';
+    html += '<div class="survey-sds-instructions" id="instructions">';
+    html += `<p>${instructions}<p>`;
+    html += '</div>';
 
-    // Initialize survey container.
-    html += '<div class="sds-container">';
+    // Randomize question order.
+    var item_order = [];
+    for (var i=0; i<items.length; i++){
+       item_order.push(i);
+    }
+    if(trial.randomize_question_order){
+       item_order = jsPsych.randomization.shuffle(item_order);
+    }
 
     // Iteratively add items.
+    html += '<div class="survey-sds-container">';
+
     for (var i = 0; i < items.length; i++) {
 
-      // Add response headers (every seven items).
-      if (i % 5 == 0) {
-        html += '<div class="sds-header"></div>';
+      // Define item ID.
+      const qid = ("0" + `${item_order[i]+1}`).slice(-2);
+
+      // Define response values.
+      var values = [];
+      for (var j = 0; j < scale.length; j++){ values.push(j); }
+      if (reverse[item_order[i]]) { values = values.reverse(); }
+
+      // Add response headers (every N items).
+      if (i % trial.scale_repeat == 0) {
+        html += '<div class="survey-sds-header"></div>';
         for (var j = 0; j < scale.length; j++) {
-          html += `<div class="sds-header">${scale[j]}</div>`;
+          html += `<div class="survey-sds-header">${scale[j]}</div>`;
         }
       }
 
-      // Initialize row.
-      html += '<div class="row-wrapper">';
-
-      // Define item number.
-      var num = ("0" + `${item_order[i]}`).slice(-2);
-
-      // Display prompt.
-      html += `<div class='sds-prompt'>${items[item_order[i]]}</div>`;
-
-      // Display responses.
-      if ( reverse[item_order[i]] ) {
-        var index = [4,3,2,1];
-      } else {
-        var index = [1,2,3,4];
+      // Add row.
+      html += '<div class="survey-sds-row">';
+      html += `<div class='survey-sds-prompt'>${items[item_order[i]]}</div>`;
+      for (let v of values) {
+        html += `<div class='survey-sds-response'><input type="radio" name="SDS-Q${qid}" value="${v}" required></div>`;
       }
-
-      for (let j of index) {
-        html += `<div class='sds-resp'><input type="radio" name="sds-Q${num}" value="${j}" required></div>`;
-      }
-
-      // End row.
       html += '</div>';
 
     }
-
-    // End survey container.
     html += '</div>';
 
-    // Add submit button
-    html += `<div class="sds-footer"><input type="submit" id="jspsych-survey-sds" value="${trial.button_label}"></input></div>`;
+    // Add submit button.
+    html += '<div class="survey-sds-footer">';
+    html += `<input type="submit" value="${trial.button_label}"></input>`;
+    html += '</div>';
 
-    // End form
-    html += '</form>'
+    // End survey.
+    html += '</form></div>';
 
     // Display HTML
     display_element.innerHTML = html;
@@ -228,7 +240,12 @@ jsPsych.plugins['survey-sds'] = (function() {
     // Response handling.
     //---------------------------------------//
 
-    display_element.querySelector('#jspsych-survey-sds').addEventListener('submit', function(event) {
+    // Scroll to top of screen.
+    window.onbeforeunload = function () {
+      window.scrollTo(0, 0);
+    }
+
+    display_element.querySelector('#survey-sds-submit').addEventListener('submit', function(event) {
 
         // Wait for response
         event.preventDefault();
@@ -242,8 +259,8 @@ jsPsych.plugins['survey-sds'] = (function() {
 
         // Store data
         var trialdata = {
-          "rt": response_time,
-          "sds": question_data
+          "responses": question_data,
+          "rt": response_time
         };
 
         // Update screen

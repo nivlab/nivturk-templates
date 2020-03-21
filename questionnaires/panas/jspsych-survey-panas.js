@@ -17,6 +17,18 @@ jsPsych.plugins['survey-panas'] = (function() {
         default: true,
         description: 'If true, the order of the questions will be randomized'
       },
+      scale_repeat: {
+        type: jsPsych.plugins.parameterType.INT,
+        pretty_name: 'Scale repeat',
+        default: 5,
+        description: 'The number of items before the scale repeats'
+      },
+      row_prompt_percent: {
+        type: jsPsych.plugins.parameterType.INT,
+        pretty_name: 'Row prompt percent',
+        default: 30,
+        description: 'The percentage of a row the item prompt should occupy'
+      },
       button_label: {
         type: jsPsych.plugins.parameterType.STRING,
         pretty_name: 'Button label',
@@ -28,10 +40,10 @@ jsPsych.plugins['survey-panas'] = (function() {
   plugin.trial = function(display_element, trial) {
 
     //---------------------------------------//
-    // Define panas questionnaire.
+    // Define questionnaire.
     //---------------------------------------//
 
-    // Define panas items.
+    // Define items.
     var items = [
       "Interested",
       "Distressed",
@@ -55,7 +67,7 @@ jsPsych.plugins['survey-panas'] = (function() {
       "Afraid"
     ];
 
-    // Define panas response scale.
+    // Define response scale.
     var scale = ["Very slightly or<br>not at all",
                  "A little",
                  "Moderately",
@@ -63,158 +75,162 @@ jsPsych.plugins['survey-panas'] = (function() {
                  "Extremely"
                ];
 
-    // Randomize question order.
-    var item_order = [];
-    for(var i=0; i<items.length; i++){
-       item_order.push(i);
-    }
-    if(trial.randomize_question_order){
-       item_order = jsPsych.randomization.shuffle(item_order);
-    }
+    // Define reverse scoring.
+    var reverse = [false, false, false, false, false, false, false, false, false, false,
+                   false, false, false, false, false, false, false, false, false, false];
+
+    // Define instructions.
+    var instructions = 'This scale consists of a number of words that describe different feelings and emotions.<br>Indicate to what extent you feel this way <b>right now</b>, that is, at the present moment.';
 
     //---------------------------------------//
     // Define survey HTML.
     //---------------------------------------//
 
-    // scroll to top of screen
-    window.scrollTo(0,0);
-
     // Initialize HTML
     var html = '';
 
+    // Define CSS constants
+    const n  = scale.length;
+    const x1 = trial.row_prompt_percent;
+    const x2 = (100 - trial.row_prompt_percent) / n;
+
     // Insert CSS
     html += `<style>
-    .panas-container {
-      margin: auto;
-      width: 100%;
-      display: grid;
-      grid-template-columns: 40% 12% 12% 12% 12% 12%;
-      grid-template-rows: auto;
-      background-color: #F8F8F8;
-      border-radius: 5px;
+    .survey-panas-wrap {
+      height: 100vh;
+      width: 100vw;
     }
-
-    .row-wrapper {
+    .survey-panas-instructions {
+      width: 60vw;
+      margin: auto;
+      font-size: 1.25vw;
+      line-height: 1.5em;
+    }
+    .survey-panas-container {
+      display: grid;
+      grid-template-columns: ${x1}% repeat(${n}, ${x2}%);
+      grid-template-rows: auto;
+      width: 60vw;
+      margin: auto;
+      background-color: #F8F8F8;
+      border-radius: 8px;
+    }
+    .survey-panas-row {
       display: contents;
     }
-
-    .row-wrapper:hover div {
+    .survey-panas-row:hover div {
       background-color: #dee8eb;
     }
-
-    .panas-header {
+    .survey-panas-header {
       padding: 18px 0 0px 0;
       text-align: center;
-      font-size: 13px;
+      font-size: 1vw;
       line-height: 1.15em;
     }
-
-    .panas-prompt {
+    .survey-panas-prompt {
       padding: 12px 0 12px 15px;
       text-align: left;
-      font-size: 14px;
+      font-size: 1.15vw;
       line-height: 1.15em;
       justify-items: center;
     }
-
-    .panas-resp {
+    .survey-panas-response {
       padding: 12px 0 12px 0;
       font-size: 12px;
       text-align: center;
       line-height: 1.15em;
       justify-items: center;
     }
-
-    .panas-resp input {
+    .survey-panas-response input[type='radio'] {
       position: relative;
     }
-
-    .panas-resp input:after {
-        display: block;
-        content: " ";
-        position: absolute;
-        bottom: 6px;
-        background: #d8dcd6;
-        height: 2px;
-        left: 13px;
-        width: 96px;
+    .survey-panas-response input[type='radio']::after {
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      height: 2px;
+      width: calc(60vw * ${x2 / 100} - 100%);
+      background: #d8dcd6;
+      content: "";
     }
-
-    .panas-resp:last-child input:after {
+    .survey-panas-response:last-child input[type='radio']::after {
       display: none;
     }
-
-    .panas-footer {
-        margin: auto;
-        top: 95%;
-        width: 100%;
-        padding: 0 0 0 0;
-        background-color: #fff;
-        text-align: right;
+    .survey-panas-footer {
+      margin: auto;
+      width: 60vw;
+      padding: 0 0 0 0;
+      text-align: right;
     }
-
-    /* Style the submit button */
-    .panas-footer input[type=submit] {
+    .survey-panas-footer input[type=submit] {
       background-color: #F0F0F0;
-      color: black;
       padding: 8px 20px;
       border: none;
       border-radius: 4px;
-      float: center;
       margin-top: 5px;
       margin-bottom: 20px;
       margin-right: 0px;
+      font-size: 1vw;
+      color: black;
     }
-    </style>`
+    </style>`;
+
+    // Initialize survey.
+    html += '<div class="survey-panas-wrap"><form id="survey-panas-submit">';
 
     // Add instructions.
-    html += '<p style="font-size:17px;">This scale consists of a number of words that describe different feelings and emotions.<br>Indicate to what extent you feel this way right now, that is, at the present moment.<p>';
+    html += '<div class="survey-panas-instructions" id="instructions">';
+    html += `<p>${instructions}<p>`;
+    html += '</div>';
 
-    // Begin form.
-    html += '<form id="jspsych-survey-panas">';
-
-    // Initialize survey container.
-    html += '<div class="panas-container">';
+    // Randomize question order.
+    var item_order = [];
+    for (var i=0; i<items.length; i++){
+       item_order.push(i);
+    }
+    if(trial.randomize_question_order){
+       item_order = jsPsych.randomization.shuffle(item_order);
+    }
 
     // Iteratively add items.
+    html += '<div class="survey-panas-container">';
+
     for (var i = 0; i < items.length; i++) {
 
-      // Add response headers (every seven items).
-      if (i % 7 == 0) {
-        html += '<div class="panas-header"></div>';
+      // Define item ID.
+      const qid = ("0" + `${item_order[i]+1}`).slice(-2);
+
+      // Define response values.
+      var values = [];
+      for (var j = 0; j < scale.length; j++){ values.push(j); }
+      if (reverse[item_order[i]]) { values = values.reverse(); }
+
+      // Add response headers (every N items).
+      if (i % trial.scale_repeat == 0) {
+        html += '<div class="survey-panas-header"></div>';
         for (var j = 0; j < scale.length; j++) {
-          html += `<div class="panas-header">${scale[j]}</div>`;
+          html += `<div class="survey-panas-header">${scale[j]}</div>`;
         }
       }
 
-      // Initialize row.
-      html += '<div class="row-wrapper">';
-
-      // Define item number.
-      var num = ("0" + `${item_order[i]}`).slice(-2);
-
-      // Display prompt.
-      html += `<div class='panas-prompt'>${items[item_order[i]]}</div>`;
-
-      // Display responses.
-      index = [1,2,3,4,5];
-      for (let j of index) {
-        html += `<div class='panas-resp'><input type="radio" name="panas-Q${num}" value="${j}" required></div>`;
+      // Add row.
+      html += '<div class="survey-panas-row">';
+      html += `<div class='survey-panas-prompt'>${items[item_order[i]]}</div>`;
+      for (let v of values) {
+        html += `<div class='survey-panas-response'><input type="radio" name="PANAS-Q${qid}" value="${v}" required></div>`;
       }
-
-      // End row.
       html += '</div>';
 
     }
-
-    // End survey container.
     html += '</div>';
 
-    // Add submit button
-    html += `<div class="panas-footer"><input type="submit" id="jspsych-survey-panas" value="${trial.button_label}"></input></div>`;
+    // Add submit button.
+    html += '<div class="survey-panas-footer">';
+    html += `<input type="submit" value="${trial.button_label}"></input>`;
+    html += '</div>';
 
-    // End form
-    html += '</form>'
+    // End survey.
+    html += '</form></div>';
 
     // Display HTML
     display_element.innerHTML = html;
@@ -223,7 +239,12 @@ jsPsych.plugins['survey-panas'] = (function() {
     // Response handling.
     //---------------------------------------//
 
-    display_element.querySelector('#jspsych-survey-panas').addEventListener('submit', function(event) {
+    // Scroll to top of screen.
+    window.onbeforeunload = function () {
+      window.scrollTo(0, 0);
+    }
+
+    display_element.querySelector('#survey-panas-submit').addEventListener('submit', function(event) {
 
         // Wait for response
         event.preventDefault();
@@ -237,8 +258,8 @@ jsPsych.plugins['survey-panas'] = (function() {
 
         // Store data
         var trialdata = {
-          "rt": response_time,
-          "panas": question_data
+          "responses": question_data,
+          "rt": response_time
         };
 
         // Update screen

@@ -1,5 +1,5 @@
 /**
- * jspsych-survey-stai
+ * survey-stai
  * a jspsych plugin for the state trait anxiety inventory
  */
 
@@ -17,6 +17,18 @@ jsPsych.plugins['survey-stai'] = (function() {
         default: true,
         description: 'If true, the order of the questions will be randomized'
       },
+      scale_repeat: {
+        type: jsPsych.plugins.parameterType.INT,
+        pretty_name: 'Scale repeat',
+        default: 7,
+        description: 'The number of items before the scale repeats'
+      },
+      row_prompt_percent: {
+        type: jsPsych.plugins.parameterType.INT,
+        pretty_name: 'Row prompt percent',
+        default: 50,
+        description: 'The percentage of a row the item prompt should occupy'
+      },
       button_label: {
         type: jsPsych.plugins.parameterType.STRING,
         pretty_name: 'Button label',
@@ -28,10 +40,10 @@ jsPsych.plugins['survey-stai'] = (function() {
   plugin.trial = function(display_element, trial) {
 
     //---------------------------------------//
-    // Define STAI questionnaire.
+    // Define questionnaire.
     //---------------------------------------//
 
-    // Define STAI items.
+    // Define items.
     var items = [
       "I feel pleasant.",
       "I feel nervous and restless.",
@@ -39,7 +51,7 @@ jsPsych.plugins['survey-stai'] = (function() {
       "I wish I could be as happy as others seem to be.",
       "I feel like a failure.",
       "I feel rested.",
-      "I am 'calm, cool, and collected'.",
+      'I am "calm, cool, and collected".',
       "I feel that difficulties are piling up so that I cannot overcome them.",
       "I worry too much over something that doesn't really matter.",
       "I am happy.",
@@ -55,163 +67,168 @@ jsPsych.plugins['survey-stai'] = (function() {
       "I get in a state of tension or turmoil as I think over my recent concerns and interest."
     ];
 
-    // Define STAI response scale.
+    // Define response scale.
     var scale = ["Almost<br>never",
                  "<br>Sometimes",
                  "<br>Often",
                  "Almost<br>always"];
 
-   // Define reverse scoring.
-   var reverse = [true, false, true, false, false, true, true, false, false, true,
-                  false, false, true, true, false, true, false, false, true, false];
+    // Define reverse scoring.
+    var reverse = [true, false, true, false, false, true, true, false, false, true,
+                   false, false, true, true, false, true, false, false, true, false];
 
-    // Randomize question order.
-    var item_order = [];
-    for(var i=0; i<items.length; i++){
-       item_order.push(i);
-    }
-    if(trial.randomize_question_order){
-       item_order = jsPsych.randomization.shuffle(item_order);
-    }
+    // Define instructions.
+    var instructions = 'Read each statement and then choose the answer to indicate how you generally feel.';
 
     //---------------------------------------//
     // Define survey HTML.
     //---------------------------------------//
 
-    // scroll to top of screen
-    window.scrollTo(0,0);
-
     // Initialize HTML
     var html = '';
 
+    // Define CSS constants
+    const n  = scale.length;
+    const x1 = trial.row_prompt_percent;
+    const x2 = (100 - trial.row_prompt_percent) / n;
+
     // Insert CSS
     html += `<style>
-    .stai-container {
-      margin: auto;
-      width: 100%;
-      display: grid;
-      grid-template-columns: 42% 14.5% 14.5% 14.5% 14.5%;
-      grid-template-rows: auto;
-      background-color: #F8F8F8;
-      border-radius: 5px;
+    .survey-stai-wrap {
+      height: 100vh;
+      width: 100vw;
     }
-    .row-wrapper {
+    .survey-stai-instructions {
+      width: 75vw;
+      margin: auto;
+      font-size: 1.25vw;
+      line-height: 1.5em;
+    }
+    .survey-stai-container {
+      display: grid;
+      grid-template-columns: ${x1}% repeat(${n}, ${x2}%);
+      grid-template-rows: auto;
+      width: 75vw;
+      margin: auto;
+      background-color: #F8F8F8;
+      border-radius: 8px;
+    }
+    .survey-stai-row {
       display: contents;
     }
-    .row-wrapper:hover div {
+    .survey-stai-row:hover div {
       background-color: #dee8eb;
     }
-    .stai-header {
+    .survey-stai-header {
       padding: 18px 0 0px 0;
       text-align: center;
-      font-size: 13px;
+      font-size: 1vw;
       line-height: 1.15em;
     }
-    .stai-prompt {
+    .survey-stai-prompt {
       padding: 12px 0 12px 15px;
       text-align: left;
-      font-size: 14px;
+      font-size: 1.15vw;
       line-height: 1.15em;
       justify-items: center;
     }
-    .stai-resp {
+    .survey-stai-response {
       padding: 12px 0 12px 0;
       font-size: 12px;
       text-align: center;
       line-height: 1.15em;
       justify-items: center;
     }
-    .stai-resp input {
+    .survey-stai-response input[type='radio'] {
       position: relative;
     }
-    .stai-resp input:after {
-        display: block;
-        content: " ";
-        position: absolute;
-        bottom: 6px;
-        background: #d8dcd6;
-        height: 2px;
-        left: 13px;
-        width: 96px;
+    .survey-stai-response input[type='radio']::after {
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      height: 2px;
+      width: calc(75vw * ${x2 / 100} - 100%);
+      background: #d8dcd6;
+      content: "";
     }
-    .stai-resp:last-child input:after {
+    .survey-stai-response:last-child input[type='radio']::after {
       display: none;
     }
-    .stai-footer {
-        margin: auto;
-        top: 95%;
-        width: 100%;
-        padding: 0 0 0 0;
-        background-color: #fff;
-        text-align: right;
+    .survey-stai-footer {
+      margin: auto;
+      width: 75vw;
+      padding: 0 0 0 0;
+      text-align: right;
     }
-    /* Style the submit button */
-    .stai-footer input[type=submit] {
+    .survey-stai-footer input[type=submit] {
       background-color: #F0F0F0;
-      color: black;
       padding: 8px 20px;
       border: none;
       border-radius: 4px;
-      float: center;
       margin-top: 5px;
       margin-bottom: 20px;
       margin-right: 0px;
+      font-size: 1vw;
+      color: black;
     }
-    </style>`
+    </style>`;
+
+    // Initialize survey.
+    html += '<div class="survey-stai-wrap"><form id="survey-stai-submit">';
 
     // Add instructions.
-    html += '<p style="font-size:17px;">Read each statement and then choose the answer to indicate how you generally feel.<p>';
+    html += '<div class="survey-stai-instructions" id="instructions">';
+    html += `<p>${instructions}<p>`;
+    html += '</div>';
 
-    // Begin form.
-    html += '<form id="jspsych-survey-stai">';
-
-    // Initialize survey container.
-    html += '<div class="stai-container">';
+    // Randomize question order.
+    var item_order = [];
+    for (var i=0; i<items.length; i++){
+       item_order.push(i);
+    }
+    if(trial.randomize_question_order){
+       item_order = jsPsych.randomization.shuffle(item_order);
+    }
 
     // Iteratively add items.
+    html += '<div class="survey-stai-container">';
+
     for (var i = 0; i < items.length; i++) {
 
-      // Add response headers (every five items).
-      if (i % 5 == 0) {
-        html += '<div class="stai-header"></div>';
+      // Define item ID.
+      const qid = ("0" + `${item_order[i]+1}`).slice(-2);
+
+      // Define response values.
+      var values = [];
+      for (var j = 0; j < scale.length; j++){ values.push(j); }
+      if (reverse[item_order[i]]) { values = values.reverse(); }
+
+      // Add response headers (every N items).
+      if (i % trial.scale_repeat == 0) {
+        html += '<div class="survey-stai-header"></div>';
         for (var j = 0; j < scale.length; j++) {
-          html += `<div class="stai-header">${scale[j]}</div>`;
+          html += `<div class="survey-stai-header">${scale[j]}</div>`;
         }
       }
 
-      // Initialize row.
-      html += '<div class="row-wrapper">';
-
-      // Define item number.
-      var num = ("0" + `${item_order[i]}`).slice(-2);
-
-      // Display prompt.
-      html += `<div class='stai-prompt'>${items[item_order[i]]}</div>`;
-
-      // Display responses.
-      if ( reverse[item_order[i]] ) {
-        var index = [4,3,2,1];
-      } else {
-        var index = [1,2,3,4];
+      // Add row.
+      html += '<div class="survey-stai-row">';
+      html += `<div class='survey-stai-prompt'>${items[item_order[i]]}</div>`;
+      for (let v of values) {
+        html += `<div class='survey-stai-response'><input type="radio" name="STAI-Q${qid}" value="${v}" required></div>`;
       }
-
-      for (let j of index) {
-        html += `<div class='stai-resp'><input type="radio" name="STAI-Q${num}" value="${j}" required></div>`;
-      }
-
-      // End row.
       html += '</div>';
 
     }
-
-    // End survey container.
     html += '</div>';
 
-    // Add submit button
-    html += `<div class="stai-footer"><input type="submit" id="jspsych-survey-stai" value="${trial.button_label}"></input></div>`;
+    // Add submit button.
+    html += '<div class="survey-stai-footer">';
+    html += `<input type="submit" value="${trial.button_label}"></input>`;
+    html += '</div>';
 
-    // End form
-    html += '</form>'
+    // End survey.
+    html += '</form></div>';
 
     // Display HTML
     display_element.innerHTML = html;
@@ -220,7 +237,12 @@ jsPsych.plugins['survey-stai'] = (function() {
     // Response handling.
     //---------------------------------------//
 
-    display_element.querySelector('#jspsych-survey-stai').addEventListener('submit', function(event) {
+    // Scroll to top of screen.
+    window.onbeforeunload = function () {
+      window.scrollTo(0, 0);
+    }
+
+    display_element.querySelector('#survey-stai-submit').addEventListener('submit', function(event) {
 
         // Wait for response
         event.preventDefault();
@@ -234,8 +256,8 @@ jsPsych.plugins['survey-stai'] = (function() {
 
         // Store data
         var trialdata = {
-          "rt": response_time,
-          "stai": question_data
+          "responses": question_data,
+          "rt": response_time
         };
 
         // Update screen

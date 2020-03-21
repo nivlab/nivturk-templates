@@ -1,6 +1,6 @@
 /**
- * jspsych-survey-nfc6
- * a jspsych plugin for the NFC-6
+ * survey-nfc6
+ * a jspsych plugin for the abbreviated Need for Cognition Scale
  */
 
 jsPsych.plugins['survey-nfc6'] = (function() {
@@ -17,6 +17,18 @@ jsPsych.plugins['survey-nfc6'] = (function() {
         default: true,
         description: 'If true, the order of the questions will be randomized'
       },
+      scale_repeat: {
+        type: jsPsych.plugins.parameterType.INT,
+        pretty_name: 'Scale repeat',
+        default: 6,
+        description: 'The number of items before the scale repeats'
+      },
+      row_prompt_percent: {
+        type: jsPsych.plugins.parameterType.INT,
+        pretty_name: 'Row prompt percent',
+        default: 40,
+        description: 'The percentage of a row the item prompt should occupy'
+      },
       button_label: {
         type: jsPsych.plugins.parameterType.STRING,
         pretty_name: 'Button label',
@@ -28,10 +40,10 @@ jsPsych.plugins['survey-nfc6'] = (function() {
   plugin.trial = function(display_element, trial) {
 
     //---------------------------------------//
-    // Define nfc6 questionnaire.
+    // Define questionnaire.
     //---------------------------------------//
 
-    // Define nfc6 items.
+    // Define items.
     var items = [
       "I would prefer complex to simple problems.",
       "I like to have the responsibility of handling a situation that requires a lot of thinking.",
@@ -41,175 +53,169 @@ jsPsych.plugins['survey-nfc6'] = (function() {
       "I would prefer a task that is intellectual, difficult, and important to one that is somewhat important but does not require much thought."
     ];
 
-    // Define nfc6 response scale.
+    // Define response scale.
     var scale = ["Extremely uncharacteristic of me",
                  "Somwhat uncharacteristic of me",
                  "Uncertain",
                  "Somwhat characteristic of me",
                  "Extremely uncharacteristic of me"]
 
-   // Define reverse scoring.
-   var reverse = [false, false, true, true, false, false];
+    // Define reverse scoring.
+    var reverse = [false, false, true, true, false, false];
 
-    // Randomize question order.
-    var item_order = [];
-    for(var i=0; i<items.length; i++){
-       item_order.push(i);
-    }
-    if(trial.randomize_question_order){
-       item_order = jsPsych.randomization.shuffle(item_order);
-    }
+
+    // Define instructions.
+    var instructions = 'For each of the statements below, please indicate whether or not the statement is characteristic of you or of what you believe.';
 
     //---------------------------------------//
     // Define survey HTML.
     //---------------------------------------//
 
-    // scroll to top of screen
-    window.scrollTo(0,0);
-
     // Initialize HTML
     var html = '';
 
+    // Define CSS constants
+    const n  = scale.length;
+    const x1 = trial.row_prompt_percent;
+    const x2 = (100 - trial.row_prompt_percent) / n;
+
     // Insert CSS
     html += `<style>
-
-    .nfc6-container {
-      margin: auto;
-      width: 80%;
-      display: grid;
-      grid-template-columns: 50% 10% 10% 10% 10% 10%;
-      grid-template-rows: auto;
-      background-color: #F8F8F8;
-      border-radius: 5px;
+    .survey-nfc6-wrap {
+      height: 100vh;
+      width: 100vw;
     }
-
-    .row-wrapper {
+    .survey-nfc6-instructions {
+      width: 80vw;
+      margin: auto;
+      font-size: 1.25vw;
+      line-height: 1.5em;
+    }
+    .survey-nfc6-container {
+      display: grid;
+      grid-template-columns: ${x1}% repeat(${n}, ${x2}%);
+      grid-template-rows: auto;
+      width: 80vw;
+      margin: auto;
+      background-color: #F8F8F8;
+      border-radius: 8px;
+    }
+    .survey-nfc6-row {
       display: contents;
     }
-
-    .row-wrapper:hover div {
+    .survey-nfc6-row:hover div {
       background-color: #dee8eb;
     }
-
-    .nfc6-header {
+    .survey-nfc6-header {
       padding: 18px 0 0px 0;
       text-align: center;
-      font-size: 12px;
+      font-size: 1vw;
       line-height: 1.15em;
     }
-
-    .nfc6-prompt {
+    .survey-nfc6-prompt {
       padding: 12px 0 12px 15px;
       text-align: left;
-      font-size: 14px;
+      font-size: 1.15vw;
       line-height: 1.15em;
       justify-items: center;
     }
-
-    .nfc6-resp {
+    .survey-nfc6-response {
       padding: 12px 0 12px 0;
       font-size: 12px;
       text-align: center;
       line-height: 1.15em;
       justify-items: center;
     }
-
-    .nfc6-resp input {
+    .survey-nfc6-response input[type='radio'] {
       position: relative;
     }
-
-    .nfc6-resp input:after {
-        display: block;
-        content: " ";
-        position: absolute;
-        bottom: 6px;
-        background: #d8dcd6;
-        height: 2px;
-        left: 13px;
-        width: 96px;
+    .survey-nfc6-response input[type='radio']::after {
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      height: 2px;
+      width: calc(80vw * ${x2 / 100} - 100%);
+      background: #d8dcd6;
+      content: "";
     }
-
-    .nfc6-resp:last-child input:after {
+    .survey-nfc6-response:last-child input[type='radio']::after {
       display: none;
     }
-
-    .nfc6-footer {
+    .survey-nfc6-footer {
       margin: auto;
-      top: 95%;
-      width: 80%;
+      width: 80vw;
       padding: 0 0 0 0;
-      background-color: #fff;
       text-align: right;
     }
-
-    /* Style the submit button */
-    .nfc6-footer input[type=submit] {
+    .survey-nfc6-footer input[type=submit] {
       background-color: #F0F0F0;
-      color: black;
       padding: 8px 20px;
       border: none;
       border-radius: 4px;
-      float: center;
       margin-top: 5px;
       margin-bottom: 20px;
       margin-right: 0px;
+      font-size: 1vw;
+      color: black;
     }
-
     </style>`;
 
+    // Initialize survey.
+    html += '<div class="survey-nfc6-wrap"><form id="survey-nfc6-submit">';
+
     // Add instructions.
-    html += '<p style="font-size:17px;">For each of the statements below, please indicate whether or not the statement is characteristic of you or of what you believe.<p>';
+    html += '<div class="survey-nfc6-instructions" id="instructions">';
+    html += `<p>${instructions}<p>`;
+    html += '</div>';
 
-    // Begin form.
-    html += '<form id="jspsych-survey-nfc6">';
-
-    // Initialize survey container.
-    html += '<div class="nfc6-container">';
+    // Randomize question order.
+    var item_order = [];
+    for (var i=0; i<items.length; i++){
+       item_order.push(i);
+    }
+    if(trial.randomize_question_order){
+       item_order = jsPsych.randomization.shuffle(item_order);
+    }
 
     // Iteratively add items.
+    html += '<div class="survey-nfc6-container">';
+
     for (var i = 0; i < items.length; i++) {
 
-      // Add response headers (every seven items).
-      if (i % 10 == 0) {
-        html += '<div class="nfc6-header"></div>';
+      // Define item ID.
+      const qid = ("0" + `${item_order[i]+1}`).slice(-2);
+
+      // Define response values.
+      var values = [];
+      for (var j = 0; j < scale.length; j++){ values.push(j); }
+      if (reverse[item_order[i]]) { values = values.reverse(); }
+
+      // Add response headers (every N items).
+      if (i % trial.scale_repeat == 0) {
+        html += '<div class="survey-nfc6-header"></div>';
         for (var j = 0; j < scale.length; j++) {
-          html += `<div class="nfc6-header">${scale[j]}</div>`;
+          html += `<div class="survey-nfc6-header">${scale[j]}</div>`;
         }
       }
 
-      // Initialize row.
-      html += '<div class="row-wrapper">';
-
-      // Define item number.
-      var num = ("0" + `${item_order[i]}`).slice(-2);
-
-      // Display prompt.
-      html += `<div class='nfc6-prompt'>${items[item_order[i]]}</div>`;
-
-      // Display responses.
-      if ( reverse[item_order[i]] ) {
-        var index = [4,3,2,1,0];
-      } else {
-        var index = [0,1,2,3,4];
+      // Add row.
+      html += '<div class="survey-nfc6-row">';
+      html += `<div class='survey-nfc6-prompt'>${items[item_order[i]]}</div>`;
+      for (let v of values) {
+        html += `<div class='survey-nfc6-response'><input type="radio" name="NFC6-Q${qid}" value="${v}" required></div>`;
       }
-
-      for (let j of index) {
-        html += `<div class='nfc6-resp'><input type="radio" name="nfc6-Q${num}" value="${j}" required></div>`;
-      }
-
-      // End row.
       html += '</div>';
 
     }
-
-    // End survey container.
     html += '</div>';
 
-    // Add submit button
-    html += `<div class="nfc6-footer"><input type="submit" id="jspsych-survey-nfc6" value="${trial.button_label}"></input></div>`;
+    // Add submit button.
+    html += '<div class="survey-nfc6-footer">';
+    html += `<input type="submit" value="${trial.button_label}"></input>`;
+    html += '</div>';
 
-    // End form
-    html += '</form>'
+    // End survey.
+    html += '</form></div>';
 
     // Display HTML
     display_element.innerHTML = html;
@@ -218,7 +224,12 @@ jsPsych.plugins['survey-nfc6'] = (function() {
     // Response handling.
     //---------------------------------------//
 
-    display_element.querySelector('#jspsych-survey-nfc6').addEventListener('submit', function(event) {
+    // Scroll to top of screen.
+    window.onbeforeunload = function () {
+      window.scrollTo(0, 0);
+    }
+
+    display_element.querySelector('#survey-nfc6-submit').addEventListener('submit', function(event) {
 
         // Wait for response
         event.preventDefault();
@@ -232,8 +243,8 @@ jsPsych.plugins['survey-nfc6'] = (function() {
 
         // Store data
         var trialdata = {
-          "rt": response_time,
-          "nfc6": question_data
+          "responses": question_data,
+          "rt": response_time
         };
 
         // Update screen

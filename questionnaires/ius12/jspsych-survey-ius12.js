@@ -1,5 +1,5 @@
 /**
- * jspsych-survey-ius12
+ * survey-ius12
  * a jspsych plugin for the intolerance of uncertainty questionnaire
  */
 
@@ -17,6 +17,18 @@ jsPsych.plugins['survey-ius12'] = (function() {
         default: true,
         description: 'If true, the order of the questions will be randomized'
       },
+      scale_repeat: {
+        type: jsPsych.plugins.parameterType.INT,
+        pretty_name: 'Scale repeat',
+        default: 6,
+        description: 'The number of items before the scale repeats'
+      },
+      row_prompt_percent: {
+        type: jsPsych.plugins.parameterType.INT,
+        pretty_name: 'Row prompt percent',
+        default: 40,
+        description: 'The percentage of a row the item prompt should occupy'
+      },
       button_label: {
         type: jsPsych.plugins.parameterType.STRING,
         pretty_name: 'Button label',
@@ -28,10 +40,10 @@ jsPsych.plugins['survey-ius12'] = (function() {
   plugin.trial = function(display_element, trial) {
 
     //---------------------------------------//
-    // Define IUS-12 questionnaire.
+    // Define questionnaire.
     //---------------------------------------//
 
-    // Define IUS-12 items.
+    // Define items.
     var items = [
       "Unforeseen events upset me greatly.",
       "It frustrates me not having all the information I need.",
@@ -47,166 +59,169 @@ jsPsych.plugins['survey-ius12'] = (function() {
       "I must get away from all uncertain situations."
     ];
 
-    // Define IUS-12 response scale.
+    // Define response scale.
     var scale = ["Not at all<br>characteristic<br>of me",
                  "A little<br>characteristic<br>of me",
                  "Somewhat<br>characteristic<br>of me",
                  "Very<br>characteristic<br>of me",
                  "Entirely<br>characteristic<br>of me"];
 
-    // Randomize question order.
-    var item_order = [];
-    for(var i=0; i<items.length; i++){
-       item_order.push(i);
-    }
-    if(trial.randomize_question_order){
-       item_order = jsPsych.randomization.shuffle(item_order);
-    }
+    // Define reverse scoring.
+    var reverse = [false, false, false, false, false, false,
+                   false, false, false, false, false, false];
+
+    // Define instructions.
+    var instructions = 'Read each statement carefully and select which best describes you.';
 
     //---------------------------------------//
     // Define survey HTML.
     //---------------------------------------//
 
-    // scroll to top of screen
-    window.scrollTo(0,0);
-
     // Initialize HTML
     var html = '';
 
-    // Insert class
-    html += `<style>
-    .ius12-container {
-      margin: auto;
-      width: 100%;
-      display: grid;
-      grid-template-columns: 40% 12% 12% 12% 12% 12%;
-      grid-template-rows: auto;
-      background-color: #F8F8F8;
-      border-radius: 5px;
-    }
+    // Define CSS constants
+    const n  = scale.length;
+    const x1 = trial.row_prompt_percent;
+    const x2 = (100 - trial.row_prompt_percent) / n;
 
-    .row-wrapper {
+    // Insert CSS
+    html += `<style>
+    .survey-ius12-wrap {
+      height: 100vh;
+      width: 100vw;
+    }
+    .survey-ius12-instructions {
+      width: 80vw;
+      margin: auto;
+      font-size: 1.25vw;
+      line-height: 1.5em;
+    }
+    .survey-ius12-container {
+      display: grid;
+      grid-template-columns: ${x1}% repeat(${n}, ${x2}%);
+      grid-template-rows: auto;
+      width: 80vw;
+      margin: auto;
+      background-color: #F8F8F8;
+      border-radius: 8px;
+    }
+    .survey-ius12-row {
       display: contents;
     }
-
-    .row-wrapper:hover div {
+    .survey-ius12-row:hover div {
       background-color: #dee8eb;
     }
-
-    .ius12-header {
+    .survey-ius12-header {
       padding: 18px 0 0px 0;
       text-align: center;
-      font-size: 13px;
+      font-size: 1vw;
       line-height: 1.15em;
     }
-
-    .ius12-prompt {
+    .survey-ius12-prompt {
       padding: 12px 0 12px 15px;
       text-align: left;
-      font-size: 14px;
+      font-size: 1.15vw;
       line-height: 1.15em;
       justify-items: center;
     }
-
-    .ius12-resp {
+    .survey-ius12-response {
       padding: 12px 0 12px 0;
       font-size: 12px;
       text-align: center;
       line-height: 1.15em;
       justify-items: center;
     }
-
-    .ius12-resp input {
+    .survey-ius12-response input[type='radio'] {
       position: relative;
     }
-
-    .ius12-resp input:after {
-        display: block;
-        content: " ";
-        position: absolute;
-        bottom: 6px;
-        background: #d8dcd6;
-        height: 2px;
-        left: 13px;
-        width: 96px;
+    .survey-ius12-response input[type='radio']::after {
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      height: 2px;
+      width: calc(80vw * ${x2 / 100} - 100%);
+      background: #d8dcd6;
+      content: "";
     }
-
-    .ius12-resp:last-child input:after {
+    .survey-ius12-response:last-child input[type='radio']::after {
       display: none;
     }
-
-    .ius12-footer {
-        margin: auto;
-        top: 95%;
-        width: 100%;
-        padding: 0 0 0 0;
-        background-color: #fff;
-        text-align: right;
+    .survey-ius12-footer {
+      margin: auto;
+      width: 80vw;
+      padding: 0 0 0 0;
+      text-align: right;
     }
-
-    /* Style the submit button */
-    .ius12-footer input[type=submit] {
+    .survey-ius12-footer input[type=submit] {
       background-color: #F0F0F0;
-      color: black;
       padding: 8px 20px;
       border: none;
       border-radius: 4px;
-      float: center;
       margin-top: 5px;
       margin-bottom: 20px;
       margin-right: 0px;
+      font-size: 1vw;
+      color: black;
     }
     </style>`;
 
+    // Initialize survey.
+    html += '<div class="survey-ius12-wrap"><form id="survey-ius12-submit">';
+
     // Add instructions.
-    html += '<p style="font-size:17px;">Read each statement carefully and select which best describes you.<p>';
+    html += '<div class="survey-ius12-instructions" id="instructions">';
+    html += `<p>${instructions}<p>`;
+    html += '</div>';
 
-    // Begin form.
-    html += '<form id="jspsych-survey-ius12">';
-
-    // Initialize survey container.
-    html += '<div class="ius12-container">';
+    // Randomize question order.
+    var item_order = [];
+    for (var i=0; i<items.length; i++){
+       item_order.push(i);
+    }
+    if(trial.randomize_question_order){
+       item_order = jsPsych.randomization.shuffle(item_order);
+    }
 
     // Iteratively add items.
+    html += '<div class="survey-ius12-container">';
+
     for (var i = 0; i < items.length; i++) {
 
-      // Add response headers (every six items).
-      if (i % 6 == 0) {
-        html += '<div class="ius12-header"></div>';
+      // Define item ID.
+      const qid = ("0" + `${item_order[i]+1}`).slice(-2);
+
+      // Define response values.
+      var values = [];
+      for (var j = 0; j < scale.length; j++){ values.push(j); }
+      if (reverse[item_order[i]]) { values = values.reverse(); }
+
+      // Add response headers (every N items).
+      if (i % trial.scale_repeat == 0) {
+        html += '<div class="survey-ius12-header"></div>';
         for (var j = 0; j < scale.length; j++) {
-          html += `<div class="ius12-header">${scale[j]}</div>`;
+          html += `<div class="survey-ius12-header">${scale[j]}</div>`;
         }
       }
 
-      // Initialize row.
-      html += '<div class="row-wrapper">';
-
-      // Define item number.
-      var num = ("0" + `${item_order[i]}`).slice(-2);
-
-      // Display prompt.
-      html += `<div class='ius12-prompt'>${items[item_order[i]]}</div>`;
-
-      // Display responses.
-      var index = [1,2,3,4,5];
-
-      for (let j of index) {
-        html += `<div class='ius12-resp'><input type="radio" name="IUS12-Q${num}" value="${j}" required></div>`;
+      // Add row.
+      html += '<div class="survey-ius12-row">';
+      html += `<div class='survey-ius12-prompt'>${items[item_order[i]]}</div>`;
+      for (let v of values) {
+        html += `<div class='survey-ius12-response'><input type="radio" name="IUS12-Q${qid}" value="${v}" required></div>`;
       }
-
-      // End row.
       html += '</div>';
 
     }
-
-    // End survey container.
     html += '</div>';
 
-    // Add submit button
-    html += `<div class="ius12-footer"><input type="submit" id="jspsych-survey-ius12" value="${trial.button_label}"></input></div>`;
+    // Add submit button.
+    html += '<div class="survey-ius12-footer">';
+    html += `<input type="submit" value="${trial.button_label}"></input>`;
+    html += '</div>';
 
-    // End form
-    html += '</form>'
+    // End survey.
+    html += '</form></div>';
 
     // Display HTML
     display_element.innerHTML = html;
@@ -215,23 +230,27 @@ jsPsych.plugins['survey-ius12'] = (function() {
     // Response handling.
     //---------------------------------------//
 
-    display_element.querySelector('#jspsych-survey-ius12').addEventListener('submit', function(event) {
+    // Scroll to top of screen.
+    window.onbeforeunload = function () {
+      window.scrollTo(0, 0);
+    }
 
-        // Wait for response.
+    display_element.querySelector('#survey-ius12-submit').addEventListener('submit', function(event) {
+
+        // Wait for response
         event.preventDefault();
 
-        // Measure response time.
+        // Measure response time
         var endTime = performance.now();
         var response_time = endTime - startTime;
 
-        // Extract responses.
         var question_data = serializeArray(this);
         question_data = objectifyForm(question_data);
 
         // Store data
         var trialdata = {
-          "rt": response_time,
-          "ius12": question_data
+          "responses": question_data,
+          "rt": response_time
         };
 
         // Update screen

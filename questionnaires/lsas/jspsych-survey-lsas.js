@@ -1,6 +1,6 @@
 /**
- * jspsych-survey-lsas
- * a jspsych plugin for the LSAS
+ * survey-lsas
+ * a jspsych plugin for the Liebowitz Social Anxiety Scale
  */
 
 jsPsych.plugins['survey-lsas'] = (function() {
@@ -17,6 +17,18 @@ jsPsych.plugins['survey-lsas'] = (function() {
         default: true,
         description: 'If true, the order of the questions will be randomized'
       },
+      scale_repeat: {
+        type: jsPsych.plugins.parameterType.INT,
+        pretty_name: 'Scale repeat',
+        default: 6,
+        description: 'The number of items before the scale repeats'
+      },
+      row_prompt_percent: {
+        type: jsPsych.plugins.parameterType.INT,
+        pretty_name: 'Row prompt percent',
+        default: 50,
+        description: 'The percentage of a row the item prompt should occupy'
+      },
       button_label: {
         type: jsPsych.plugins.parameterType.STRING,
         pretty_name: 'Button label',
@@ -28,10 +40,10 @@ jsPsych.plugins['survey-lsas'] = (function() {
   plugin.trial = function(display_element, trial) {
 
     //---------------------------------------//
-    // Define lsas questionnaire.
+    // Define questionnaire.
     //---------------------------------------//
 
-    // Define lsas items.
+    // Define items.
     var items = [
       "Telephoning in public<br><div class='subtext'>Speaking on the telephone in a public place</div>",
       "Participating in small groups<br><div class='subtext'>Having a discussion with a few others</div>",
@@ -61,173 +73,166 @@ jsPsych.plugins['survey-lsas'] = (function() {
     // Define lsas response scale.
     var scale = ["None","Mild","Moderate","Severe"]
 
-   // Define reverse scoring.
-   var reverse = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
+    // Define reverse scoring.
+    var reverse = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
 
-    // Randomize question order.
-    var item_order = [];
-    for(var i=0; i<items.length; i++){
-       item_order.push(i);
-    }
-    if(trial.randomize_question_order){
-       item_order = jsPsych.randomization.shuffle(item_order);
-    }
+    // Define instructions.
+    var instructions = 'Fill out the following questionnaire with the most suitable answer for each item.<br>Base your answers on your experience in the <b>past week.</b>';
 
     //---------------------------------------//
     // Define survey HTML.
     //---------------------------------------//
 
-    // scroll to top of screen
-    window.scrollTo(0,0);
-
     // Initialize HTML
     var html = '';
 
+    // Define CSS constants
+    const n  = scale.length;
+    const x1 = trial.row_prompt_percent;
+    const x2 = (100 - trial.row_prompt_percent) / n;
+
     // Insert CSS
     html += `<style>
-
-    .lsas-container {
-      margin: auto;
-      width: 100%;
-      display: grid;
-      grid-template-columns: 50% 12.5% 12.5% 12.5% 12.5%;
-      grid-template-rows: auto;
-      background-color: #F8F8F8;
-      border-radius: 5px;
+    .survey-lsas-wrap {
+      height: 100vh;
+      width: 100vw;
     }
-
-    .row-wrapper {
+    .survey-lsas-instructions {
+      width: 75vw;
+      margin: auto;
+      font-size: 1.25vw;
+      line-height: 1.5em;
+    }
+    .survey-lsas-container {
+      display: grid;
+      grid-template-columns: ${x1}% repeat(${n}, ${x2}%);
+      grid-template-rows: auto;
+      width: 75vw;
+      margin: auto;
+      background-color: #F8F8F8;
+      border-radius: 8px;
+    }
+    .survey-lsas-row {
       display: contents;
     }
-
-    .row-wrapper:hover div {
+    .survey-lsas-row:hover div {
       background-color: #dee8eb;
     }
-
-    .lsas-header {
+    .survey-lsas-header {
       padding: 18px 0 0px 0;
       text-align: center;
-      font-size: 13px;
+      font-size: 1vw;
       line-height: 1.15em;
     }
-
-    .lsas-prompt {
+    .survey-lsas-prompt {
       padding: 12px 0 12px 15px;
       text-align: left;
-      font-size: 14px;
+      font-size: 1.15vw;
       line-height: 1.15em;
       justify-items: center;
     }
-
-    .lsas-prompt .subtext {
+    .survey-lsas-prompt .subtext {
+      margin: 5px 0 0 0;
       font-size: smaller;
       font-weight: 600;
     }
-
-    .lsas-resp {
+    .survey-lsas-response {
       padding: 12px 0 12px 0;
       font-size: 12px;
       text-align: center;
       line-height: 1.15em;
       justify-items: center;
     }
-
-    .lsas-resp input {
+    .survey-lsas-response input[type='radio'] {
       position: relative;
     }
-
-    .lsas-resp input:after {
-        display: block;
-        content: " ";
-        position: absolute;
-        bottom: 6px;
-        background: #d8dcd6;
-        height: 2px;
-        left: 13px;
-        width: 120px;
+    .survey-lsas-response input[type='radio']::after {
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      height: 2px;
+      width: calc(75vw * ${x2 / 100} - 100%);
+      background: #d8dcd6;
+      content: "";
     }
-
-    .lsas-resp:last-child input:after {
+    .survey-lsas-response:last-child input[type='radio']::after {
       display: none;
     }
-
-    .lsas-footer {
-        margin: auto;
-        top: 95%;
-        width: 100%;
-        padding: 0 0 0 0;
-        background-color: #fff;
-        text-align: right;
+    .survey-lsas-footer {
+      margin: auto;
+      width: 75vw;
+      padding: 0 0 0 0;
+      text-align: right;
     }
-
-    /* Style the submit button */
-    .lsas-footer input[type=submit] {
+    .survey-lsas-footer input[type=submit] {
       background-color: #F0F0F0;
-      color: black;
       padding: 8px 20px;
       border: none;
       border-radius: 4px;
-      float: center;
       margin-top: 5px;
       margin-bottom: 20px;
       margin-right: 0px;
+      font-size: 1vw;
+      color: black;
     }
-
     </style>`;
 
-    // Begin form.
-    html += '<form id="jspsych-survey-lsas">';
+    // Initialize survey.
+    html += '<div class="survey-lsas-wrap"><form id="survey-lsas-submit">';
 
     // Add instructions.
-    html += '<p style="font-size:16px; width: 80vw;">Fill out the following questionnaire with the most suitable answer for each item. Base your answers on your experience in the <b>past week.</b><p>';
+    html += '<div class="survey-lsas-instructions" id="instructions">';
+    html += `<p>${instructions}<p>`;
+    html += '</div>';
 
-    // Initialize survey container.
-    html += '<div class="lsas-container">';
+    // Randomize question order.
+    var item_order = [];
+    for (var i=0; i<items.length; i++){
+       item_order.push(i);
+    }
+    if(trial.randomize_question_order){
+       item_order = jsPsych.randomization.shuffle(item_order);
+    }
 
     // Iteratively add items.
+    html += '<div class="survey-lsas-container">';
+
     for (var i = 0; i < items.length; i++) {
 
-      // Add response headers (every seven items).
-      if (i % 6 == 0) {
-        html += '<div class="lsas-header"></div>';
+      // Define item ID.
+      const qid = ("0" + `${item_order[i]+1}`).slice(-2);
+
+      // Define response values.
+      var values = [];
+      for (var j = 0; j < scale.length; j++){ values.push(j); }
+      if (reverse[item_order[i]]) { values = values.reverse(); }
+
+      // Add response headers (every N items).
+      if (i % trial.scale_repeat == 0) {
+        html += '<div class="survey-lsas-header"></div>';
         for (var j = 0; j < scale.length; j++) {
-          html += `<div class="lsas-header">${scale[j]}</div>`;
+          html += `<div class="survey-lsas-header">${scale[j]}</div>`;
         }
       }
 
-      // Initialize row.
-      html += '<div class="row-wrapper">';
-
-      // Define item number.
-      var num = ("0" + `${item_order[i]}`).slice(-2);
-
-      // Display prompt.
-      html += `<div class='lsas-prompt'>${items[item_order[i]]}</div>`;
-
-      // Display responses.
-      if ( reverse[item_order[i]] ) {
-        var index = [3,2,1,0];
-      } else {
-        var index = [0,1,2,3];
+      // Add row.
+      html += '<div class="survey-lsas-row">';
+      html += `<div class='survey-lsas-prompt'>${items[item_order[i]]}</div>`;
+      for (let v of values) {
+        html += `<div class='survey-lsas-response'><input type="radio" name="LSAS-Q${qid}" value="${v}" required></div>`;
       }
-
-      for (let j of index) {
-        html += `<div class='lsas-resp'><input type="radio" name="lsas-Q${num}" value="${j}" required></div>`;
-      }
-
-      // End row.
       html += '</div>';
 
     }
-
-    // End survey container.
     html += '</div>';
 
-    // Add submit button
-    html += `<div class="lsas-footer"><input type="submit" id="jspsych-survey-lsas" value="${trial.button_label}"></input></div>`;
+    // Add submit button.
+    html += '<div class="survey-lsas-footer">';
+    html += `<input type="submit" value="${trial.button_label}"></input>`;
+    html += '</div>';
 
-    // End form
-    html += '</form>'
+    // End survey.
+    html += '</form></div>';
 
     // Display HTML
     display_element.innerHTML = html;
@@ -236,7 +241,12 @@ jsPsych.plugins['survey-lsas'] = (function() {
     // Response handling.
     //---------------------------------------//
 
-    display_element.querySelector('#jspsych-survey-lsas').addEventListener('submit', function(event) {
+    // Scroll to top of screen.
+    window.onbeforeunload = function () {
+      window.scrollTo(0, 0);
+    }
+
+    display_element.querySelector('#survey-lsas-submit').addEventListener('submit', function(event) {
 
         // Wait for response
         event.preventDefault();
@@ -250,8 +260,8 @@ jsPsych.plugins['survey-lsas'] = (function() {
 
         // Store data
         var trialdata = {
-          "rt": response_time,
-          "lsas": question_data
+          "responses": question_data,
+          "rt": response_time
         };
 
         // Update screen

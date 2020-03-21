@@ -1,16 +1,22 @@
 /**
- * survey-eat26
- * a jspsych plugin for the Eating Attitude Scale
+ * survey-pswq
+ * a jspsych plugin for the Penn State Worry Questionnaire (Meyer et al., 1990)
  */
 
-jsPsych.plugins['survey-eat26'] = (function() {
+jsPsych.plugins['survey-pswq'] = (function() {
 
   var plugin = {};
 
   plugin.info = {
-    name: 'survey-eat26',
+    name: 'survey-pswq',
     description: '',
     parameters: {
+      version: {
+        type: jsPsych.plugins.parameterType.STRING,
+        pretty_name: 'Instrument version',
+        default:  'Full',
+        description: 'Specifies whether to run the 3-item, 8-item, or Full (16-item) version.'
+      },
       randomize_question_order: {
         type: jsPsych.plugins.parameterType.BOOL,
         pretty_name: 'Randomize Question Order',
@@ -20,13 +26,13 @@ jsPsych.plugins['survey-eat26'] = (function() {
       scale_repeat: {
         type: jsPsych.plugins.parameterType.INT,
         pretty_name: 'Scale repeat',
-        default: 7,
+        default: 8,
         description: 'The number of items before the scale repeats'
       },
       row_prompt_percent: {
         type: jsPsych.plugins.parameterType.INT,
         pretty_name: 'Row prompt percent',
-        default: 45,
+        default: 50,
         description: 'The percentage of a row the item prompt should occupy'
       },
       button_label: {
@@ -43,44 +49,41 @@ jsPsych.plugins['survey-eat26'] = (function() {
     // Define questionnaire.
     //---------------------------------------//
 
-    // Define items.
-    var items = [
-      "Am terrified about being overweight.",
-      "Avoid eating when I am hungry.",
-      "Find myself preoccupied with food.",
-      "Have gone on eating binges where I feel that I may not have be able to stop.",
-      "Cut my food into small pieces.",
-      "Aware of the calorie content of foods that I eat",
-      "Particularly avoid food with a high carbohydrate content (i.e. bread, rice, potatoes, etc.)",
-      "Feel that others would prefer if I ate more.",
-      "Vomit after I have eaten.",
-      "Feel extremely guilty after eating.",
-      "Am preoccupied with a desire to be thinner.",
-      "Think about burning up calories when I exercise.",
-      "Other people think that I am too thin.",
-      "Am preoccupied with the htought of having fat on my body.",
-      "Take longer than others to eat my meals.",
-      "Avoid foods with sugar in them.",
-      "Eat diet foods.",
-      "Feel that food controls my life.",
-      "Display self-control around food.",
-      "Feel that others pressure me to eat.",
-      "Give too much time and thought to food.",
-      "Feel uncomfortable after eating sweets.",
-      "Engage in dieting behavior.",
-      "Like my stomach to be empty.",
-      "Have the impult to vomit after meals.",
-      "Enjoy trying new rich foods."
+    // Define pswq items
+    var all_items = [
+      "If I don't have enough time to do everything, I do not worry about it.",                // Q1; included in full version
+      "My worries overwhelm me.",                                                              // Q2; included in 8-item and full version
+      "I do not tend to worry about things.",                                                  // Q3; to be reverse-scored; included in full version
+      "Many situations make me worry.",                                                        // Q4; included in 3-item, 8-item, and full version
+      "I know I should not worry about things, but I just can't help it.",                     // Q5; included in 8-item and full version
+      "When I'm under pressure I worry a lot.",                                                // Q6; included in 8-item and full version
+      "I'm always worrying about something.",                                                  // Q7; included in 8-item and full version
+      "I find it easy to dismiss worrisome thoughts.",                                         // Q8; to be reverse-scored; included in full version
+      "As soon as I finish one task, I start to worry about everything else I have to do.",    // Q9; included in 8-item and full version
+      "I never worry about anything.",                                                         // Q10; to be reverse-scored; included in full version
+      "When there's nothing more I can do about a concern, I don't worry about it any more.",  // Q11; to be reverse-scored; included in full version
+      "I have been a worrier all my life.",                                                    // Q12; included in 8-item and full version
+      "I notice that I have been worrying about things.",                                      // Q13; included in 8-item and full version
+      "Once I start worrying, I can't stop.",                                                  // Q14; included in 3-item and full version
+      "I worry all the time.",                                                                 // Q15; included in 3-item and full version
+      "I worry about projects until they are done."                                            // Q16; included in full version
     ];
 
     // Define response scale.
-    var scale = ["Never", "Rarely", "Sometimes", "Often", "Usually", "Always"]
+    var scale = [
+       "Not at all<br>typical<br>of me",              // scored as 0
+       "Not very<br>typical<br>of me",                // scored as 1
+       "Somewhat<br>typical<br>of me",                // scored as 2
+       "Fairly<br>typical<br>of me",                  // scored as 3
+       "Very<br>typical<br>of me"                     // scored as 4
+     ];
 
     // Define reverse scoring.
-    var reverse = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true];
+    var all_reverse = [false, false, false, false, false, false, false, false,
+                       false, false, false, false, false, false, false, false];
 
     // Define instructions.
-    var instructions = 'Please fill out the below form as accurately, honestly and completely as possible. There are no right or wrong answers.';
+    var instructions = 'Select the option that best describes how typical or characteristic each item is of you.';
 
     //---------------------------------------//
     // Define survey HTML.
@@ -96,73 +99,73 @@ jsPsych.plugins['survey-eat26'] = (function() {
 
     // Insert CSS
     html += `<style>
-    .survey-eat26-wrap {
+    .survey-pswq-wrap {
       height: 100vh;
       width: 100vw;
     }
-    .survey-eat26-instructions {
-      width: 75vw;
+    .survey-pswq-instructions {
+      width: 80vw;
       margin: auto;
       font-size: 1.25vw;
       line-height: 1.5em;
     }
-    .survey-eat26-container {
+    .survey-pswq-container {
       display: grid;
       grid-template-columns: ${x1}% repeat(${n}, ${x2}%);
       grid-template-rows: auto;
-      width: 75vw;
+      width: 80vw;
       margin: auto;
       background-color: #F8F8F8;
       border-radius: 8px;
     }
-    .survey-eat26-row {
+    .survey-pswq-row {
       display: contents;
     }
-    .survey-eat26-row:hover div {
+    .survey-pswq-row:hover div {
       background-color: #dee8eb;
     }
-    .survey-eat26-header {
+    .survey-pswq-header {
       padding: 18px 0 0px 0;
       text-align: center;
       font-size: 1vw;
       line-height: 1.15em;
     }
-    .survey-eat26-prompt {
+    .survey-pswq-prompt {
       padding: 12px 0 12px 15px;
       text-align: left;
       font-size: 1.15vw;
       line-height: 1.15em;
       justify-items: center;
     }
-    .survey-eat26-response {
+    .survey-pswq-response {
       padding: 12px 0 12px 0;
       font-size: 12px;
       text-align: center;
       line-height: 1.15em;
       justify-items: center;
     }
-    .survey-eat26-response input[type='radio'] {
+    .survey-pswq-response input[type='radio'] {
       position: relative;
     }
-    .survey-eat26-response input[type='radio']::after {
+    .survey-pswq-response input[type='radio']::after {
       position: absolute;
       left: 100%;
       top: 50%;
       height: 2px;
-      width: calc(75vw * ${x2 / 100} - 100%);
+      width: calc(80vw * ${x2 / 100} - 100%);
       background: #d8dcd6;
       content: "";
     }
-    .survey-eat26-response:last-child input[type='radio']::after {
+    .survey-pswq-response:last-child input[type='radio']::after {
       display: none;
     }
-    .survey-eat26-footer {
+    .survey-pswq-footer {
       margin: auto;
-      width: 75vw;
+      width: 80vw;
       padding: 0 0 0 0;
       text-align: right;
     }
-    .survey-eat26-footer input[type=submit] {
+    .survey-pswq-footer input[type=submit] {
       background-color: #F0F0F0;
       padding: 8px 20px;
       border: none;
@@ -176,12 +179,30 @@ jsPsych.plugins['survey-eat26'] = (function() {
     </style>`;
 
     // Initialize survey.
-    html += '<div class="survey-eat26-wrap"><form id="survey-eat26-submit">';
+    html += '<div class="survey-pswq-wrap"><form id="survey-pswq-submit">';
 
     // Add instructions.
-    html += '<div class="survey-eat26-instructions" id="instructions">';
+    html += '<div class="survey-pswq-instructions" id="instructions">';
     html += `<p>${instructions}<p>`;
     html += '</div>';
+
+    // subset items depending on version requested
+    var item_index = []
+    if (trial.version == "Full"){
+      item_index = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    } else if (trial.version == "8-item"){
+      item_index = [1, 3, 4, 5, 6, 8, 11, 12];
+    } else if (trial.version == "3-item"){
+      item_index = [3, 13, 14];
+    }
+
+    var items = [];
+    var reverse = [];
+    for (i = 0; i < item_index.length; i++){
+      items.push(all_items[item_index[i]]);
+      reverse.push(all_reverse[item_index[i]]);
+    }
+
 
     // Randomize question order.
     var item_order = [];
@@ -193,7 +214,7 @@ jsPsych.plugins['survey-eat26'] = (function() {
     }
 
     // Iteratively add items.
-    html += '<div class="survey-eat26-container">';
+    html += '<div class="survey-pswq-container">';
 
     for (var i = 0; i < items.length; i++) {
 
@@ -207,17 +228,17 @@ jsPsych.plugins['survey-eat26'] = (function() {
 
       // Add response headers (every N items).
       if (i % trial.scale_repeat == 0) {
-        html += '<div class="survey-eat26-header"></div>';
+        html += '<div class="survey-pswq-header"></div>';
         for (var j = 0; j < scale.length; j++) {
-          html += `<div class="survey-eat26-header">${scale[j]}</div>`;
+          html += `<div class="survey-pswq-header">${scale[j]}</div>`;
         }
       }
 
       // Add row.
-      html += '<div class="survey-eat26-row">';
-      html += `<div class='survey-eat26-prompt'>${items[item_order[i]]}</div>`;
+      html += '<div class="survey-pswq-row">';
+      html += `<div class='survey-pswq-prompt'>${items[item_order[i]]}</div>`;
       for (let v of values) {
-        html += `<div class='survey-eat26-response'><input type="radio" name="EAT26-Q${qid}" value="${v}" required></div>`;
+        html += `<div class='survey-pswq-response'><input type="radio" name="PSWQ-Q${qid}" value="${v}" required></div>`;
       }
       html += '</div>';
 
@@ -225,7 +246,7 @@ jsPsych.plugins['survey-eat26'] = (function() {
     html += '</div>';
 
     // Add submit button.
-    html += '<div class="survey-eat26-footer">';
+    html += '<div class="survey-pswq-footer">';
     html += `<input type="submit" value="${trial.button_label}"></input>`;
     html += '</div>';
 
@@ -244,7 +265,7 @@ jsPsych.plugins['survey-eat26'] = (function() {
       window.scrollTo(0, 0);
     }
 
-    display_element.querySelector('#survey-eat26-submit').addEventListener('submit', function(event) {
+    display_element.querySelector('#survey-pswq-submit').addEventListener('submit', function(event) {
 
         // Wait for response
         event.preventDefault();

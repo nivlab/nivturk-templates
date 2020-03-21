@@ -1,6 +1,6 @@
 /**
- * jspsych-survey-gad7
- * a jspsych plugin for the GAD-7
+ * survey-gad7
+ * a jspsych plugin for the Generalized Anxiety Disorder Scale
  */
 
 jsPsych.plugins['survey-gad7'] = (function() {
@@ -17,6 +17,18 @@ jsPsych.plugins['survey-gad7'] = (function() {
         default: true,
         description: 'If true, the order of the questions will be randomized'
       },
+      scale_repeat: {
+        type: jsPsych.plugins.parameterType.INT,
+        pretty_name: 'Scale repeat',
+        default: 8,
+        description: 'The number of items before the scale repeats'
+      },
+      row_prompt_percent: {
+        type: jsPsych.plugins.parameterType.INT,
+        pretty_name: 'Row prompt percent',
+        default: 45,
+        description: 'The percentage of a row the item prompt should occupy'
+      },
       button_label: {
         type: jsPsych.plugins.parameterType.STRING,
         pretty_name: 'Button label',
@@ -28,10 +40,10 @@ jsPsych.plugins['survey-gad7'] = (function() {
   plugin.trial = function(display_element, trial) {
 
     //---------------------------------------//
-    // Define gad7 questionnaire.
+    // Define questionnaire.
     //---------------------------------------//
 
-    // Define gad7 items.
+    // Define items.
     var items = [
       "Feeling nervous, anxious, or on edge",
       "Not being able to stop or control worrying",
@@ -42,154 +54,167 @@ jsPsych.plugins['survey-gad7'] = (function() {
       "Feeling afraid as if something awful might happen"
     ];
 
-    // Define gad7 response scale.
+    // Define response scale.
     var scale = ["Not at<br>all",
                  "Several<br>days",
                  "Over half<br>the days",
                  "Nearly<br>every day"];
 
-    // Randomize question order.
-    var item_order = [];
-    for(var i=0; i<items.length; i++){
-       item_order.push(i);
-    }
-    if(trial.randomize_question_order){
-       item_order = jsPsych.randomization.shuffle(item_order);
-    }
+    // Define reverse scoring.
+    var reverse = [false, false, false, false, false, false, false];
+
+    // Define instructions.
+    var instructions = 'Over <b>the last 2 weeks</b>, how often have you been bothered by the following problems?';
 
     //---------------------------------------//
     // Define survey HTML.
     //---------------------------------------//
 
-    // scroll to top of screen
-    window.scrollTo(0,0);
-
     // Initialize HTML
     var html = '';
 
+    // Define CSS constants
+    const n  = scale.length;
+    const x1 = trial.row_prompt_percent;
+    const x2 = (100 - trial.row_prompt_percent) / n;
+
     // Insert CSS
     html += `<style>
-    .gad7-container {
-      margin: auto;
-      width: 100%;
-      display: grid;
-      grid-template-columns: 42% 14.5% 14.5% 14.5% 14.5%;
-      grid-template-rows: auto;
-      background-color: #F8F8F8;
-      border-radius: 5px;
+    .survey-gad7-wrap {
+      height: 100vh;
+      width: 100vw;
     }
-    .row-wrapper {
+    .survey-gad7-instructions {
+      width: 70vw;
+      margin: auto;
+      font-size: 1.25vw;
+      line-height: 1.5em;
+    }
+    .survey-gad7-container {
+      display: grid;
+      grid-template-columns: ${x1}% repeat(${n}, ${x2}%);
+      grid-template-rows: auto;
+      width: 70vw;
+      margin: auto;
+      background-color: #F8F8F8;
+      border-radius: 8px;
+    }
+    .survey-gad7-row {
       display: contents;
     }
-    .row-wrapper:hover div {
+    .survey-gad7-row:hover div {
       background-color: #dee8eb;
     }
-    .gad7-header {
+    .survey-gad7-header {
       padding: 18px 0 0px 0;
       text-align: center;
-      font-size: 13px;
+      font-size: 1vw;
       line-height: 1.15em;
     }
-    .gad7-prompt {
+    .survey-gad7-prompt {
       padding: 12px 0 12px 15px;
       text-align: left;
-      font-size: 14px;
+      font-size: 1.15vw;
       line-height: 1.15em;
       justify-items: center;
     }
-    .gad7-resp {
+    .survey-gad7-response {
       padding: 12px 0 12px 0;
       font-size: 12px;
       text-align: center;
       line-height: 1.15em;
       justify-items: center;
     }
-    .gad7-resp input {
+    .survey-gad7-response input[type='radio'] {
       position: relative;
     }
-    .gad7-resp input:after {
-        display: block;
-        content: " ";
-        position: absolute;
-        bottom: 6px;
-        background: #d8dcd6;
-        height: 2px;
-        left: 13px;
-        width: 96px;
+    .survey-gad7-response input[type='radio']::after {
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      height: 2px;
+      width: calc(70vw * ${x2 / 100} - 100%);
+      background: #d8dcd6;
+      content: "";
     }
-    .gad7-resp:last-child input:after {
+    .survey-gad7-response:last-child input[type='radio']::after {
       display: none;
     }
-    .gad7-footer {
-        margin: auto;
-        top: 95%;
-        width: 100%;
-        padding: 0 0 0 0;
-        background-color: #fff;
-        text-align: right;
+    .survey-gad7-footer {
+      margin: auto;
+      width: 70vw;
+      padding: 0 0 0 0;
+      text-align: right;
     }
-    /* Style the submit button */
-    .gad7-footer input[type=submit] {
+    .survey-gad7-footer input[type=submit] {
       background-color: #F0F0F0;
-      color: black;
       padding: 8px 20px;
       border: none;
       border-radius: 4px;
-      float: center;
       margin-top: 5px;
       margin-bottom: 20px;
       margin-right: 0px;
+      font-size: 1vw;
+      color: black;
     }
     </style>`;
 
+    // Initialize survey.
+    html += '<div class="survey-gad7-wrap"><form id="survey-gad7-submit">';
+
     // Add instructions.
-    html += '<p style="font-size:17px;">Over the last 2 weeks, how often have you been bothered by the following problems?<p>';
+    html += '<div class="survey-gad7-instructions" id="instructions">';
+    html += `<p>${instructions}<p>`;
+    html += '</div>';
 
-    // Begin form.
-    html += '<form id="jspsych-survey-gad7">';
-
-    // Initialize survey container.
-    html += '<div class="gad7-container">';
+    // Randomize question order.
+    var item_order = [];
+    for (var i=0; i<items.length; i++){
+       item_order.push(i);
+    }
+    if(trial.randomize_question_order){
+       item_order = jsPsych.randomization.shuffle(item_order);
+    }
 
     // Iteratively add items.
+    html += '<div class="survey-gad7-container">';
+
     for (var i = 0; i < items.length; i++) {
 
-      // Add response headers (every seven items).
-      if (i % 7 == 0) {
-        html += '<div class="gad7-header"></div>';
+      // Define item ID.
+      const qid = ("0" + `${item_order[i]+1}`).slice(-2);
+
+      // Define response values.
+      var values = [];
+      for (var j = 0; j < scale.length; j++){ values.push(j); }
+      if (reverse[item_order[i]]) { values = values.reverse(); }
+
+      // Add response headers (every N items).
+      if (i % trial.scale_repeat == 0) {
+        html += '<div class="survey-gad7-header"></div>';
         for (var j = 0; j < scale.length; j++) {
-          html += `<div class="gad7-header">${scale[j]}</div>`;
+          html += `<div class="survey-gad7-header">${scale[j]}</div>`;
         }
       }
 
-      // Initialize row.
-      html += '<div class="row-wrapper">';
-
-      // Define item number.
-      var num = ("0" + `${item_order[i]}`).slice(-2);
-
-      // Display prompt.
-      html += `<div class='gad7-prompt'>${items[item_order[i]]}</div>`;
-
-      // Display responses.
-      index = [0,1,2,3];
-      for (let j of index) {
-        html += `<div class='gad7-resp'><input type="radio" name="gad7-Q${num}" value="${j}" required></div>`;
+      // Add row.
+      html += '<div class="survey-gad7-row">';
+      html += `<div class='survey-gad7-prompt'>${items[item_order[i]]}</div>`;
+      for (let v of values) {
+        html += `<div class='survey-gad7-response'><input type="radio" name="GAD7-Q${qid}" value="${v}" required></div>`;
       }
-
-      // End row.
       html += '</div>';
 
     }
-
-    // End survey container.
     html += '</div>';
 
-    // Add submit button
-    html += `<div class="gad7-footer"><input type="submit" id="jspsych-survey-gad7" value="${trial.button_label}"></input></div>`;
+    // Add submit button.
+    html += '<div class="survey-gad7-footer">';
+    html += `<input type="submit" value="${trial.button_label}"></input>`;
+    html += '</div>';
 
-    // End form
-    html += '</form>'
+    // End survey.
+    html += '</form></div>';
 
     // Display HTML
     display_element.innerHTML = html;
@@ -198,7 +223,12 @@ jsPsych.plugins['survey-gad7'] = (function() {
     // Response handling.
     //---------------------------------------//
 
-    display_element.querySelector('#jspsych-survey-gad7').addEventListener('submit', function(event) {
+    // Scroll to top of screen.
+    window.onbeforeunload = function () {
+      window.scrollTo(0, 0);
+    }
+
+    display_element.querySelector('#survey-gad7-submit').addEventListener('submit', function(event) {
 
         // Wait for response
         event.preventDefault();
@@ -212,8 +242,8 @@ jsPsych.plugins['survey-gad7'] = (function() {
 
         // Store data
         var trialdata = {
-          "rt": response_time,
-          "gad7": question_data
+          "responses": question_data,
+          "rt": response_time
         };
 
         // Update screen
