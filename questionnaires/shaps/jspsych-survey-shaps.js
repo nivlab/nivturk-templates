@@ -49,13 +49,13 @@ jsPsych.plugins['survey-shaps'] = (function() {
       "I would enjoy my favorite television or radio show.",                                                       // Q1; lightly edited
       "I would enjoy being with my family or close friends.",                                                      // Q2
       "I would find pleasure in my hobbies and pastimes.",                                                         // Q3
-      "I would be able to enjoy my favourite. meal.",                                                               // Q4
+      "I would be able to enjoy my favourite meal.",                                                               // Q4
       "I would enjoy a warm bath or refreshing shower.",                                                           // Q5
       "I would find pleasure in the scent of flowers or the smell of a fresh sea breeze or freshly baked bread.",  // Q6
-      "I would enjoy seeing other people's smiling. faces.",                                                        // Q7
+      "I would enjoy seeing other people's smiling faces.",                                                        // Q7
       "I would enjoy looking good when I have made an effort with my appearance.",                                 // Q8; lightly edited
       "I would enjoy reading a book, magazine, or newspaper.",                                                     // Q9
-      "I would enjoy a cup of tea or coffee or my favorite. drink.",                                                // Q10
+      "I would enjoy a cup of tea or coffee or my favorite drink.",                                                // Q10
       "I would be able to take pleasure in small things, e.g. bright sunny day, a telephone call from a friend.",  // Q11
       "I would be able to enjoy a beautiful landscape or view.",                                                   // Q12
       "I would get pleasure from helping others.",                                                                 // Q13
