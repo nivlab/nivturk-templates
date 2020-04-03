@@ -79,8 +79,8 @@ jsPsych.plugins['survey-pswq'] = (function() {
      ];
 
     // Define reverse scoring.
-    var all_reverse = [false, false, false, false, false, false, false, false,
-                       false, false, false, false, false, false, false, false];
+    var all_reverse = [false, false, true, false, false, false, false, true,
+                       false, true, true, false, false, false, false, false];
 
     // Define instructions.
     var instructions = 'Select the option that best describes how typical or characteristic each item is of you.';
