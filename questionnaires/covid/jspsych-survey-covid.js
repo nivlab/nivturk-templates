@@ -187,7 +187,7 @@ jsPsych.plugins['survey-covid'] = (function() {
       html += '<div class="survey-covid-row">';
       html += `<div class='survey-covid-prompt'>${items[i]}</div>`;
       for (let v of values) {
-        html += `<div class='survey-covid-response'><input type="radio" name="DASS-Q${qid}" value="${v}" required></div>`;
+        html += `<div class='survey-covid-response'><input type="radio" name="COVID-Q${qid}" value="${v}" required></div>`;
       }
       html += '</div>';
 
@@ -222,7 +222,7 @@ jsPsych.plugins['survey-covid'] = (function() {
       html += '<div class="survey-covid-row">';
       html += `<div class='survey-covid-prompt'>${items[i]}</div>`;
       for (let v of values) {
-        html += `<div class='survey-covid-response'><input type="radio" name="DASS-Q${qid}" value="${v}" required></div>`;
+        html += `<div class='survey-covid-response'><input type="radio" name="COVID-Q${qid}" value="${v}" required></div>`;
       }
       html += '</div>';
 
