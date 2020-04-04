@@ -79,9 +79,9 @@ jsPsych.plugins['survey-template'] = (function() {
     var html = '';
 
     // Define CSS constants
-    const n  = trial.scale.length;
-    const x1 = trial.item_width;
-    const x2 = (100 - trial.item_width) / n;
+    const n  = trial.scale.length;              // Number of item responses
+    const x1 = trial.item_width;                // Width of item prompt (percentage)
+    const x2 = (100 - trial.item_width) / n;    // Width of item response (percentage)
 
     // Insert CSS
     html += `<style>
@@ -125,24 +125,32 @@ jsPsych.plugins['survey-template'] = (function() {
     }
     .survey-template-response {
       padding: 12px 0 12px 0;
-      font-size: 12px;
+      font-size: 1.15vw;
       text-align: center;
       line-height: 1.15em;
       justify-items: center;
     }
     .survey-template-response input[type='radio'] {
       position: relative;
+      width: 13px;
+      height: 13px;
     }
-    .survey-template-response input[type='radio']:after {
+    .survey-template-response .pseudo-input {
+      position: relative;
+      height: 0px;
+      width: 0px;
+      display: inline-block;
+    }
+    .survey-template-response .pseudo-input:after {
       position: absolute;
-      left: 100%;
-      top: 50%;
+      left: 6.5px;
+      top: -6px;
       height: 2px;
       width: calc(${trial.survey_width}vw * ${x2 / 100} - 100%);
       background: #d8dcd6;
       content: "";
     }
-    .survey-template-response:last-child input[type='radio']:after {
+    .survey-template-response:last-child .pseudo-input:after {
       display: none;
     }
     .survey-template-footer {
@@ -161,6 +169,48 @@ jsPsych.plugins['survey-template'] = (function() {
       margin-right: 0px;
       font-size: 1vw;
       color: black;
+    }
+    @media screen and (max-width: 1200px) {
+      .survey-template-instructions {
+        width: calc(1200px * ${trial.survey_width} / 100);
+        font-size: calc(1200px * 0.0125);
+      }
+      .survey-template-container {
+        width: calc(1200px * ${trial.survey_width} / 100);
+      }
+      .survey-template-header {
+        font-size: calc(1200px * 0.0100);
+      }
+      .survey-template-prompt {
+        font-size: calc(1200px * 0.0115);
+      }
+      .survey-template-response .pseudo-input:after {
+        width: calc(1200px * ${x2 / 100} - 30px);
+      }
+      .survey-template-footer {
+        width: calc(1200px * ${trial.survey_width} / 100);
+      }
+    }
+    @media screen and (min-width: 1600px) {
+      .survey-template-instructions {
+        width: calc(1600px * ${trial.survey_width} / 100);
+        font-size: calc(1600px * 0.0125);
+      }
+      .survey-template-container {
+        width: calc(1600px * ${trial.survey_width} / 100);
+      }
+      .survey-template-header {
+        font-size: calc(1600px * 0.0100);
+      }
+      .survey-template-prompt {
+        font-size: calc(1600px * 0.0115);
+      }
+      .survey-template-response .pseudo-input:after {
+        width: calc(1600px * ${x2 / 100} - 40px);
+      }
+      .survey-template-footer {
+        width: calc(1600px * ${trial.survey_width} / 100);
+      }
     }
     </style>`;
 
@@ -206,7 +256,10 @@ jsPsych.plugins['survey-template'] = (function() {
       html += '<div class="survey-template-row">';
       html += `<div class='survey-template-prompt'>${trial.items[item_order[i]]}</div>`;
       for (let v of values) {
-        html += `<div class='survey-template-response'><input type="radio" name="Q${qid}" value="${v}" required></div>`;
+        html += '<div class="survey-template-response">';
+        html += '<div class="pseudo-input"></div>';
+        html += `<input type="radio" name="Q${qid}" value="${v}" required>`;
+        html += "</div>";
       }
       html += '</div>';
 
