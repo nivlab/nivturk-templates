@@ -8,6 +8,7 @@
  **/
 
 
+  // prevent the form from being submitted if the enter key is pressed
  	function noenter() {
 	  return !(window.event && window.event.keyCode == 13);
 	}
@@ -183,8 +184,7 @@ jsPsych.plugins["audio-test"] = (function() {
       // gather the data to store for the trial
       var trial_data = {
         "rt": response.rt,
-        "stimulus": trial.stimulus,
-        "button_pressed": response.button
+        "stimulus": trial.stimulus
       };
 
       // clear the display
