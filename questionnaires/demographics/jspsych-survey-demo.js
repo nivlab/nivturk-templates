@@ -258,8 +258,6 @@ jsPsych.plugins['survey-demo'] = (function() {
     for (var i = 0; i < form.elements.length; i++) {
       var field = form.elements[i];
 
-
-      console.log(field)
       // Don't serialize fields without a name, submits, buttons, file and reset inputs, and disabled fields
       if (!field.name || field.disabled || field.type === 'file' || field.type === 'reset' || field.type === 'submit' || field.type === 'button') continue;
 
@@ -281,6 +279,29 @@ jsPsych.plugins['survey-demo'] = (function() {
           value: field.value
         });
       }
+    }
+
+    // add checkbox responses
+    var checkbox_types = document.querySelectorAll('input[type=checkbox]');
+    var checkbox_names = [];
+    for (var i = 0; i < checkbox_types.length; i++) {
+        if (! checkbox_names.includes(checkbox_types[i].name) ){
+          checkbox_names.push(checkbox_types[i].name)
+        }
+    }
+
+    for (var i = 0; i < checkbox_names.length; i++ ){
+      var checkboxes = document.querySelectorAll(`input[name=${checkbox_names[i]}]:checked`)
+      var responses = [];
+
+      for (var j = 0; j < checkboxes.length; j++) {
+        responses.push(checkboxes[j].value)
+      }
+      serialized.push({
+        name: checkbox_names[i],
+        value: responses
+      })
+
     }
 
     return serialized;
