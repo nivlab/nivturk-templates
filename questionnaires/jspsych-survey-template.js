@@ -19,6 +19,13 @@ jsPsych.plugins['survey-template'] = (function() {
         pretty_name: 'Items',
         decription: 'The questions associated with the survey'
       },
+      infrequency_items: {
+        type: jsPsych.plugins.parameterType.INT,
+        array: true,
+        pretty_name: 'Infrequency items',
+        decription: 'Infrequency-check item numbers (0-indexed)',
+        default: null
+      },
       scale: {
         type: jsPsych.plugins.parameterType.HTML_STRING,
         array: true,
@@ -229,6 +236,11 @@ jsPsych.plugins['survey-template'] = (function() {
     }
     if(trial.randomize_question_order){
        item_order = jsPsych.randomization.shuffle(item_order);
+
+       // check if the first item is an infrequency item; if so, re-shuffle to avoid this
+       while (!(trial.infrequency_items === null) && trial.infrequency_items.toString().includes([item_order[0]])){
+         item_order = jsPsych.randomization.shuffle(item_order);
+       }
     }
 
     // Iteratively add items.
