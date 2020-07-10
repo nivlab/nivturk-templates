@@ -19,13 +19,6 @@ jsPsych.plugins['survey-template'] = (function() {
         pretty_name: 'Items',
         decription: 'The questions associated with the survey'
       },
-      infrequency_items: {
-        type: jsPsych.plugins.parameterType.INT,
-        array: true,
-        pretty_name: 'Infrequency items',
-        decription: 'Infrequency-check item numbers (0-indexed)',
-        default: null
-      },
       scale: {
         type: jsPsych.plugins.parameterType.HTML_STRING,
         array: true,
@@ -38,6 +31,13 @@ jsPsych.plugins['survey-template'] = (function() {
         pretty_name: 'Randomize Question Order',
         default: [],
         description: 'If true, the corresponding item will be reverse scored'
+      },
+      infrequency_items: {
+        type: jsPsych.plugins.parameterType.INT,
+        array: true,
+        pretty_name: 'Infrequency items',
+        decription: 'Infrequency-check item numbers (0-indexed)',
+        default: null
       },
       instructions: {
         type: jsPsych.plugins.parameterType.HTML_STRING,
@@ -222,7 +222,7 @@ jsPsych.plugins['survey-template'] = (function() {
     </style>`;
 
     // Initialize survey.
-    html += '<div class="survey-template-wrap"><form id="survey-template-submit">';
+    html += '<div class="survey-template-wrap"><form name="survey-template" id="survey-template-submit">';
 
     // Add instructions.
     html += '<div class="survey-template-instructions" id="instructions">';
@@ -231,16 +231,17 @@ jsPsych.plugins['survey-template'] = (function() {
 
     // Randomize question order.
     var item_order = [];
-    for (var i=0; i < trial.items.length; i++){
-       item_order.push(i);
-    }
+    for (var i=0; i < trial.items.length; i++){ item_order.push(i); }
     if(trial.randomize_question_order){
-       item_order = jsPsych.randomization.shuffle(item_order);
 
-       // check if the first item is an infrequency item; if so, re-shuffle to avoid this
-       while (!(trial.infrequency_items === null) && trial.infrequency_items.toString().includes([item_order[0]])){
-         item_order = jsPsych.randomization.shuffle(item_order);
-       }
+      // Shuffle item order
+      item_order = jsPsych.randomization.shuffle(item_order);
+
+      // check if the first item is an infrequency item; if so, re-shuffle to avoid this
+      while (!(trial.infrequency_items === null) && trial.infrequency_items.toString().includes([item_order[0]])){
+        item_order = jsPsych.randomization.shuffle(item_order);
+      }
+
     }
 
     // Iteratively add items.
@@ -270,7 +271,7 @@ jsPsych.plugins['survey-template'] = (function() {
       for (let v of values) {
         html += '<div class="survey-template-response">';
         html += '<div class="pseudo-input"></div>';
-        html += `<input type="radio" name="Q${qid}" value="${v}" required>`;
+        html += `<input type="radio" name="Q${i}" value="${v}" id="q${i}-v${v}" required>`;
         html += "</div>";
       }
       html += '</div>';
@@ -298,6 +299,15 @@ jsPsych.plugins['survey-template'] = (function() {
       window.scrollTo(0, 0);
     }
 
+    // Iteratively add event listeners.
+    var click_times = [];
+    var radios = document.forms["survey-template"].elements;
+    for (var i = 0, max = radios.length; i < max; i++) {
+      radios[i].onclick = function() {
+        click_times.push( performance.now() - startTime );
+      }
+    }
+
     display_element.querySelector('#survey-template-submit').addEventListener('submit', function(event) {
 
         // Wait for response
@@ -313,6 +323,7 @@ jsPsych.plugins['survey-template'] = (function() {
         // Store data
         var trialdata = {
           "responses": question_data,
+          "events": click_times,
           "rt": response_time
         };
 
