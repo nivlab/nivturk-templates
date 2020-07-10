@@ -83,7 +83,7 @@ jsPsych.plugins["mental-health-alert"] = (function() {
     html += '<li>If the questions you answered trouble you in any way, we urge you to arrange a timely appointment with your physician, clinical psychologist or psychiatrist.</li>';
     html += '<li>For help finding a mental health professional, you can visit <a href="https://www.nami.org/Find-Support/Living-with-a-Mental-Health-Condition/Finding-a-Mental-Health-Professional" target="_blank">NAMI resources page</a>, and/or email <a href="mailto:info@nami.org" target="_blank">info@nami.org</a> for more specific or personal concerns.</li>';
     html += '<li>A number of organizations offer support during difficult times. Below we have listed some examples of these free and confidential support networks:<ul>';
-    html += '<li style="font-size: 1.25vw; margin: 0.3em 0 0 0">The <a href="http://www.contact-usa.org/chat.html" target="_blank">Lifeline Crisis chat</a></li>';
+    html += '<li style="font-size: 1.25vw; margin: 0.3em 0 0 0">The <a href="https://suicidepreventionlifeline.org/chat" target="_blank">Lifeline Crisis chat</a></li>';
     html += '<li style="font-size: 1.25vw; margin: 0.3em 0 0 0">The <a href="http://suicidepreventionlifeline.org" target="_blank">National Suicide Prevention Hotline</a> (or call: 1-800-273-8255)</li>';
     html += '</ul></ul>';
 
