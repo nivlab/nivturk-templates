@@ -14,7 +14,7 @@ jsPsych.plugins['survey-lsas'] = (function() {
       randomize_question_order: {
         type: jsPsych.plugins.parameterType.BOOL,
         pretty_name: 'Randomize Question Order',
-        default: true,
+        default: false,
         description: 'If true, the order of the questions will be randomized'
       },
       scale_repeat: {
@@ -26,7 +26,7 @@ jsPsych.plugins['survey-lsas'] = (function() {
       row_prompt_percent: {
         type: jsPsych.plugins.parameterType.INT,
         pretty_name: 'Row prompt percent',
-        default: 50,
+        default: 40,
         description: 'The percentage of a row the item prompt should occupy'
       },
       button_label: {
@@ -45,15 +45,15 @@ jsPsych.plugins['survey-lsas'] = (function() {
 
     // Define items.
     var items = [
-      "Telephoning in public<br><div class='subtext'>Speaking on the telephone in a public place</div>",
-      "Participating in small groups<br><div class='subtext'>Having a discussion with a few others</div>",
-      "Eating in public places<br><div class='subtext'>Do you tremble or feel awkward handling food?</div>",
-      "Drinking with others in public places<br><div class='subtext'>Refers to any beverage including alcohol</div>",
-      "Talking to people in authority<br><div class='subtext'>For example, a boss or teacher</div>",
-      "Acting, performing, or giving a talk in front of an audience<br><div class='subtext'>Refers to a large audience</div>",
-      "Going to a party<br><div class='subtext'>An average party to which you may be invited; assume you know some but not all people at the party</div>",
-      "Working while being observed<br><div class='subtext'>Any type of work you might do including school work or housework</div>",
-      "Writing while being obsreved<br><div class='subtext'>For example, signing a check in a bank</div>",
+      "Telephoning in public",
+      "Participating in small groups",
+      "Eating in public places",
+      "Drinking with others in public places",
+      "Talking to people in authority",
+      "Acting, performing, or giving a talk in front of an audience",
+      "Going to a party",
+      "Working while being observed",
+      "Writing while being observed",
       "Calling someone you don't know very well",
       "Talking with people you don't know very well",
       "Meeting strangers",
@@ -70,6 +70,33 @@ jsPsych.plugins['survey-lsas'] = (function() {
       "Resisting a high pressure salesperson"
     ];
 
+    // Define clarifying info.
+    var info = [
+      "speaking on the telephone in a public place",
+      "having a discussion with a few others",
+      "do you tremble or feel awkward handling food",
+      "refers to any beverage including alcohol",
+      "for example, a boss or teacher",
+      "refers to a large audience",
+      "an average party to which you may be invited; assume you know some but not all people at the party",
+      "any type of work you might do including school work or housework",
+      "for example, signing a check in a bank",
+      "",
+      "",
+      "assume others are of average importance to you",
+      "assume others are sometimes present",
+      "refers to a small group, and nobody has to move seats for you",
+      "telling a story to a group of people",
+      "speaking from your seat in a small meeting or standing up in a large meeting",
+      "",
+      "refers to appropriate eye contact",
+      "refers to an oral report to a small group",
+      "refers to a single person trying to initiate a relationship with a stranger",
+      "",
+      "",
+      "",
+    ]
+
     // Define lsas response scale.
     var scale = ["None","Mild","Moderate","Severe"]
 
@@ -77,7 +104,7 @@ jsPsych.plugins['survey-lsas'] = (function() {
     var reverse = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
 
     // Define instructions.
-    var instructions = 'Fill out the following questionnaire with the most suitable answer for each item.<br>Base your answers on your experience in the <b>past week.</b>';
+    var instructions = 'How much do you <b>fear</b> the following social situations?<br>Base your answers on your experience in the <b>past week.</b>';
 
     //---------------------------------------//
     // Define survey HTML.
@@ -131,10 +158,24 @@ jsPsych.plugins['survey-lsas'] = (function() {
       line-height: 1.15em;
       justify-items: center;
     }
-    .survey-lsas-prompt .subtext {
-      margin: 5px 0 0 0;
-      font-size: smaller;
-      font-weight: 600;
+    .survey-lsas-prompt button {
+      margin: 0px 4px;
+      font-size: 10px;
+      border-radius: 100%;
+    }
+    .survey-lsas-prompt button .addinfo {
+      visibility: hidden;
+      position: absolute;
+      width: 120px;
+      padding: 5px 2px;
+      border-radius: 6px;
+      color: #fff;
+      background-color: black;
+      text-align: center;
+      z-index: 1;
+    }
+    .survey-lsas-prompt:hover button .addinfo {
+      visibility: visible;
     }
     .survey-lsas-response {
       padding: 12px 0 12px 0;
@@ -217,7 +258,12 @@ jsPsych.plugins['survey-lsas'] = (function() {
 
       // Add row.
       html += '<div class="survey-lsas-row">';
-      html += `<div class='survey-lsas-prompt'>${items[item_order[i]]}</div>`;
+      html += '<div class="survey-lsas-prompt">';
+      html += `${items[item_order[i]]}`;
+      if (info[item_order[i]].length > 0) {
+        html += `<button>?<div class="addinfo">${info[item_order[i]]}</div></button>`
+      }
+      html += '</div>';
       for (let v of values) {
         html += `<div class='survey-lsas-response'><input type="radio" name="LSAS-Q${qid}" value="${v}" required></div>`;
       }

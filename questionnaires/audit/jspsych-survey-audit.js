@@ -32,7 +32,7 @@ jsPsych.plugins['survey-audit'] = (function() {
     .audit-header {
       margin: auto;
       top: 5%;
-      width: 100%;
+      width: 80vw;
       padding: 0 0 0 0;
       background-color: #fff;
       font-size: 90%;
@@ -102,7 +102,7 @@ jsPsych.plugins['survey-audit'] = (function() {
     // Add header
     html += `
     <div class=audit-header>
-        <p>Please choose the option that best describes your answer to each question.</p>
+        <p>Because alcohol use can affect your health and can interfere with certain medications and treatments, it is important that we ask some questions about your use of alcohol. Please choose the option that best describes your answer to each question.</p>
     </div>`
 
     // Begin form
