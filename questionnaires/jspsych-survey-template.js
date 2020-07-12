@@ -139,8 +139,8 @@ jsPsych.plugins['survey-template'] = (function() {
     }
     .survey-template-response input[type='radio'] {
       position: relative;
-      width: 13px;
-      height: 13px;
+      width: 15px;
+      height: 15px;
     }
     .survey-template-response .pseudo-input {
       position: relative;
@@ -299,14 +299,23 @@ jsPsych.plugins['survey-template'] = (function() {
       window.scrollTo(0, 0);
     }
 
-    // Iteratively add event listeners.
-    var click_times = [];
-    var radios = document.forms["survey-template"].elements;
-    for (var i = 0, max = radios.length; i < max; i++) {
-      radios[i].onclick = function() {
-        click_times.push( performance.now() - startTime );
+    // Preallocate space.
+    var key_events = [];
+    var mouse_events = [];
+    var radio_events = [];
+
+    // Add event listener.
+    document.addEventListener("click", function(event){
+      const response_time = performance.now() - startTime
+      if (event.screenX > 0) {
+        mouse_events.push( response_time );
+      } else {
+        key_events.push( response_time );
       }
-    }
+      if (event.target.type == "radio") {
+        radio_events.push( response_time )
+      }
+    });
 
     display_element.querySelector('#survey-template-submit').addEventListener('submit', function(event) {
 
@@ -323,7 +332,9 @@ jsPsych.plugins['survey-template'] = (function() {
         // Store data
         var trialdata = {
           "responses": question_data,
-          "events": click_times,
+          "radio_events": radio_events,
+          "key_events": key_events,
+          "mouse_events": mouse_events,
           "rt": response_time
         };
 
