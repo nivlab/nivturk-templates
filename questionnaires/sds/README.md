@@ -9,7 +9,7 @@ var items = [
   "Morning is when I feel the best.",
   "I have crying spells or feel like it.",
   "I have trouble sleeping at night.",
-  "I eat as much as I used.",
+  "I eat as much as I used to.",
   "I still enjoy sex.",
   "I notice that I am losing weight.",
   "I have trouble with constipation.",
