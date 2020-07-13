@@ -305,7 +305,7 @@ jsPsych.plugins['survey-template'] = (function() {
     var radio_events = [];
 
     // Add event listener.
-    document.addEventListener("click", function(event){
+    function log_event(event) {
       const response_time = performance.now() - startTime
       if (event.screenX > 0) {
         mouse_events.push( response_time );
@@ -315,7 +315,8 @@ jsPsych.plugins['survey-template'] = (function() {
       if (event.target.type == "radio") {
         radio_events.push( response_time )
       }
-    });
+    }
+    document.addEventListener("click", log_event);
 
     display_element.querySelector('#survey-template-submit').addEventListener('submit', function(event) {
 
@@ -331,12 +332,16 @@ jsPsych.plugins['survey-template'] = (function() {
 
         // Store data
         var trialdata = {
+          "item_order": item_order,
           "responses": question_data,
           "radio_events": radio_events,
           "key_events": key_events,
           "mouse_events": mouse_events,
           "rt": response_time
         };
+
+        // Remove event listener
+        document.removeEventListener("click", log_event);
 
         // Update screen
         display_element.innerHTML = '';
