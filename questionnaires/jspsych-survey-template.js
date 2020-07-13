@@ -271,7 +271,7 @@ jsPsych.plugins['survey-template'] = (function() {
       for (let v of values) {
         html += '<div class="survey-template-response">';
         html += '<div class="pseudo-input"></div>';
-        html += `<input type="radio" name="Q${i}" value="${v}" id="q${i}-v${v}" required>`;
+        html += `<input type="radio" name="Q${qid}" value="${v}" required>`;
         html += "</div>";
       }
       html += '</div>';
