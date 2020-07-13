@@ -11,7 +11,7 @@ var items = [
   "Find myself preoccupied with food.",
   "Have gone on eating binges where I feel that I may not have be able to stop.",
   "Cut my food into small pieces.",
-  "Aware of the calorie content of foods that I eat",
+  "Aware of the calorie content of foods that I eat.",
   "Particularly avoid food with a high carbohydrate content (i.e. bread, rice, potatoes, etc.)",
   "Feel that others would prefer if I ate more.",
   "Vomit after I have eaten.",
