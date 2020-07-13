@@ -14,7 +14,7 @@ jsPsych.plugins['survey-lsas'] = (function() {
       randomize_question_order: {
         type: jsPsych.plugins.parameterType.BOOL,
         pretty_name: 'Randomize Question Order',
-        default: false,
+        default: true,
         description: 'If true, the order of the questions will be randomized'
       },
       scale_repeat: {
@@ -186,6 +186,8 @@ jsPsych.plugins['survey-lsas'] = (function() {
     }
     .survey-lsas-response input[type='radio'] {
       position: relative;
+      width: 15px;
+      height: 15px;
     }
     .survey-lsas-response input[type='radio']::after {
       position: absolute;
@@ -265,7 +267,7 @@ jsPsych.plugins['survey-lsas'] = (function() {
       }
       html += '</div>';
       for (let v of values) {
-        html += `<div class='survey-lsas-response'><input type="radio" name="LSAS-Q${qid}" value="${v}" required></div>`;
+        html += `<div class='survey-lsas-response'><input type="radio" name="Q${qid}" value="${v}" required></div>`;
       }
       html += '</div>';
 
@@ -292,6 +294,24 @@ jsPsych.plugins['survey-lsas'] = (function() {
       window.scrollTo(0, 0);
     }
 
+    // Preallocate space.
+    var key_events = [];
+    var mouse_events = [];
+    var radio_events = [];
+
+    // Add event listener.
+    document.addEventListener("click", function(event){
+      const response_time = performance.now() - startTime
+      if (event.screenX > 0) {
+        mouse_events.push( response_time );
+      } else {
+        key_events.push( response_time );
+      }
+      if (event.target.type == "radio") {
+        radio_events.push( response_time )
+      }
+    });
+
     display_element.querySelector('#survey-lsas-submit').addEventListener('submit', function(event) {
 
         // Wait for response
@@ -307,6 +327,9 @@ jsPsych.plugins['survey-lsas'] = (function() {
         // Store data
         var trialdata = {
           "responses": question_data,
+          "radio_events": radio_events,
+          "key_events": key_events,
+          "mouse_events": mouse_events,
           "rt": response_time
         };
 

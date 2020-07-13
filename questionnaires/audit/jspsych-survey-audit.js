@@ -21,8 +21,9 @@ jsPsych.plugins['survey-audit'] = (function() {
   }
   plugin.trial = function(display_element, trial) {
 
-    // scroll to top of screen
-    window.scrollTo(0,0);
+    //---------------------------------------//
+    // Define survey HTML.
+    //---------------------------------------//
 
     // Initialize HTML
     var html = '';
@@ -113,24 +114,24 @@ jsPsych.plugins['survey-audit'] = (function() {
 
     // Add item #1
     html += '<div class="row">';
-    html += '<div class="audit-prompt"><label for="audit01">How often do you have a drink containing alcohol?</label></div>';
+    html += '<div class="audit-prompt"><label for="Q01">How often do you have a drink containing alcohol?</label></div>';
     html += '<div class="audit-resp">';
-    html += '<label><input type="radio" name="audit01" value="0" required>Never</label><br>';
-    html += '<label><input type="radio" name="audit01" value="1" required>Monthly or less</label><br>';
-    html += '<label><input type="radio" name="audit01" value="2" required>2-4 times a month</label><br>';
-    html += '<label><input type="radio" name="audit01" value="3" required>2-3 times a week</label><br>';
-    html += '<label><input type="radio" name="audit01" value="4" required>4 or more times a week</label>';
+    html += '<label><input type="radio" name="Q01" value="0" required>Never</label><br>';
+    html += '<label><input type="radio" name="Q01" value="1" required>Monthly or less</label><br>';
+    html += '<label><input type="radio" name="Q01" value="2" required>2-4 times a month</label><br>';
+    html += '<label><input type="radio" name="Q01" value="3" required>2-3 times a week</label><br>';
+    html += '<label><input type="radio" name="Q01" value="4" required>4 or more times a week</label>';
     html += '</div></div><hr color="#fff">';
 
     // Add item #2
     html += '<div class="row">';
-    html += '<div class="audit-prompt"><label for="audit02">How many drinks containing alcohol do you have on a typical day when you are drinking?</label></div>';
+    html += '<div class="audit-prompt"><label for="Q02">How many drinks containing alcohol do you have on a typical day when you are drinking?</label></div>';
     html += '<div class="audit-resp">';
-    html += '<label><input type="radio" name="audit02" value="0" required>1 or 2</label><br>';
-    html += '<label><input type="radio" name="audit02" value="1" required>3 or 4</label><br>';
-    html += '<label><input type="radio" name="audit02" value="2" required>5 or 6</label><br>';
-    html += '<label><input type="radio" name="audit02" value="3" required>7 to 9</label><br>';
-    html += '<label><input type="radio" name="audit02" value="4" required>10 or more</label>';
+    html += '<label><input type="radio" name="Q02" value="0" required>1 or 2</label><br>';
+    html += '<label><input type="radio" name="Q02" value="1" required>3 or 4</label><br>';
+    html += '<label><input type="radio" name="Q02" value="2" required>5 or 6</label><br>';
+    html += '<label><input type="radio" name="Q02" value="3" required>7 to 9</label><br>';
+    html += '<label><input type="radio" name="Q02" value="4" required>10 or more</label>';
     html += '</div></div><hr color="#fff">';
 
     // Add items #3-8.
@@ -144,14 +145,15 @@ jsPsych.plugins['survey-audit'] = (function() {
     ]
 
     for (var i = 0; i < items.length; i++) {
+      const qid = ("0" + `${i+3}`).slice(-2);
       html += '<div class="row">';
-      html += `<div class="audit-prompt"><label for="audit0${i+3}">${items[i]}</label></div>`;
+      html += `<div class="audit-prompt"><label for="Q${qid}">${items[i]}</label></div>`;
       html += '<div class="audit-resp">';
-      html += `<label><input type="radio" name="audit0${i+3}" value="0" required>Never</label><br>`;
-      html += `<label><input type="radio" name="audit0${i+3}" value="1" required>Less than monthly</label><br>`;
-      html += `<label><input type="radio" name="audit0${i+3}" value="2" required>Monthly</label><br>`;
-      html += `<label><input type="radio" name="audit0${i+3}" value="3" required>Weekly</label><br>`;
-      html += `<label><input type="radio" name="audit0${i+3}" value="4" required>Daily or almost daily</label>`;
+      html += `<label><input type="radio" name="Q${qid}" value="0" required>Never</label><br>`;
+      html += `<label><input type="radio" name="Q${qid}" value="1" required>Less than monthly</label><br>`;
+      html += `<label><input type="radio" name="Q${qid}" value="2" required>Monthly</label><br>`;
+      html += `<label><input type="radio" name="Q${qid}" value="3" required>Weekly</label><br>`;
+      html += `<label><input type="radio" name="Q${qid}" value="4" required>Daily or almost daily</label>`;
       html += '</div></div><hr color="#fff">';
     }
 
@@ -162,16 +164,16 @@ jsPsych.plugins['survey-audit'] = (function() {
     ]
 
     for (var i = 0; i < items.length; i++) {
+      const qid = ("0" + `${i+9}`).slice(-2);
       html += '<div class="row">';
-      html += `<div class="audit-prompt"><label for="audit0${i+9}">${items[i]}</label></div>`;
+      html += `<div class="audit-prompt"><label for="Q${qid}">${items[i]}</label></div>`;
       html += '<div class="audit-resp">';
-      html += `<label><input type="radio" name="audit0${i+9}" value="0" required>No</label><br>`;
-      html += `<label><input type="radio" name="audit0${i+9}" value="2" required>Yes, but not in the last year</label><br>`;
-      html += `<label><input type="radio" name="audit0${i+9}" value="4" required>Yes, during the last year</label>`;
+      html += `<label><input type="radio" name="Q${qid}" value="0" required>No</label><br>`;
+      html += `<label><input type="radio" name="Q${qid}" value="2" required>Yes, but not in the last year</label><br>`;
+      html += `<label><input type="radio" name="Q${qid}" value="4" required>Yes, during the last year</label>`;
       html += '</div></div>';
       if (i == 0) { html += '<hr color="#fff">'; }
     }
-
 
     // End form
     html += '</div>';
@@ -188,6 +190,33 @@ jsPsych.plugins['survey-audit'] = (function() {
     // Display HTML
     display_element.innerHTML = html;
 
+    //---------------------------------------//
+    // Response handling.
+    //---------------------------------------//
+
+    // Scroll to top of screen.
+    window.onbeforeunload = function () {
+      window.scrollTo(0, 0);
+    }
+
+    // Preallocate space.
+    var key_events = [];
+    var mouse_events = [];
+    var radio_events = [];
+
+    // Add event listener.
+    document.addEventListener("click", function(event){
+      const response_time = performance.now() - startTime
+      if (event.screenX > 0) {
+        mouse_events.push( response_time );
+      } else {
+        key_events.push( response_time );
+      }
+      if (event.target.type == "radio") {
+        radio_events.push( response_time )
+      }
+    });
+
     display_element.querySelector('#jspsych-survey-audit').addEventListener('submit', function(event) {
 
         // Wait for response
@@ -203,7 +232,10 @@ jsPsych.plugins['survey-audit'] = (function() {
         // Store data
         var trialdata = {
           "rt": response_time,
-          "audit": question_data
+          "radio_events": radio_events,
+          "key_events": key_events,
+          "mouse_events": mouse_events,
+          "responses": question_data
         };
 
         // Update screen
