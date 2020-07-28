@@ -8,7 +8,7 @@ The Penn State Worry Questionnaire (Meyer et al., 1990). Includes an option for 
 
 // Define pswq items
 var items = [
-  "If I don't have enough time to do everything, I do not worry about it.",                // Q1; included in full version
+  "If I don't have enough time to do everything, I do not worry about it.",                // Q1; to be reverse-scored; included in full version
   "My worries overwhelm me.",                                                              // Q2; included in 8-item and full version
   "I do not tend to worry about things.",                                                  // Q3; to be reverse-scored; included in full version
   "Many situations make me worry.",                                                        // Q4; included in 3-item, 8-item, and full version
@@ -34,7 +34,7 @@ var scale = [
    "Very typical of me"                     // scored as 4
  ];
 
-var reverse = [false, false, true, false, false, false, false, true,
+var reverse = [true, false, true, false, false, false, false, true,
                false, true, true, false, false, false, false, false];
 
 var instructions = 'Select the option that best describes how typical or characteristic each item is of you.';
