@@ -60,6 +60,7 @@ jsPsych.plugins['survey-lsas'] = (function() {
       "Urinating in a public bathroom",
       "Entering a room when others are already seated",
       "Being the center of attention",
+      "Speaking up at a meeting",
       "Taking a written test",
       "Expressing appropriate disagreement or disapproval to people you don't know very well",
       "Looking at people you don't know very well in the eyes",
@@ -89,19 +90,20 @@ jsPsych.plugins['survey-lsas'] = (function() {
       "telling a story to a group of people",
       "speaking from your seat in a small meeting or standing up in a large meeting",
       "",
+      "",
       "refers to appropriate eye contact",
       "refers to an oral report to a small group",
       "refers to a single person trying to initiate a relationship with a stranger",
       "",
       "",
-      "",
+      ""
     ]
 
     // Define lsas response scale.
     var scale = ["None","Mild","Moderate","Severe"]
 
     // Define reverse scoring.
-    var reverse = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
+    var reverse = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
 
     // Define instructions.
     var instructions = 'How much do you <b>fear</b> the following social situations?<br>Base your answers on your experience in the <b>past week.</b>';
