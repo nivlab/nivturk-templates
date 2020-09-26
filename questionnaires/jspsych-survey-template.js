@@ -268,10 +268,10 @@ jsPsych.plugins['survey-template'] = (function() {
       // Add row.
       html += '<div class="survey-template-row">';
       html += `<div class='survey-template-prompt'>${trial.items[item_order[i]]}</div>`;
-      for (let v of values) {
+      for (var j = 0; j < values.length; j++) {
         html += '<div class="survey-template-response">';
         html += '<div class="pseudo-input"></div>';
-        html += `<input type="radio" name="Q${qid}" value="${v}" required>`;
+        html += `<input type="radio" name="Q${qid}" value="${values[j]}" id=${j} required>`;
         html += "</div>";
       }
       html += '</div>';
@@ -306,7 +306,7 @@ jsPsych.plugins['survey-template'] = (function() {
 
     // Add event listener.
     function log_event(event) {
-      const response_time = performance.now() - startTime
+      const response_time = Math.round(performance.now() - startTime);
       if (event.screenX > 0) {
         mouse_events.push( response_time );
       } else {
@@ -327,17 +327,26 @@ jsPsych.plugins['survey-template'] = (function() {
         var endTime = performance.now();
         var response_time = endTime - startTime;
 
+        // Serialize data
         var question_data = serializeArray(this);
-        question_data = objectifyForm(question_data);
+
+        // Extract responses
+        var responses = objectifyForm(question_data);
+
+        // Detect heuristic responding
+        var straightlining = detectStraightLining(question_data);
+        var zigzagging = detectZigZagging(question_data, trial.scale);
 
         // Store data
         var trialdata = {
+          "responses": responses,
+          "rt": response_time,
           "item_order": item_order,
-          "responses": question_data,
           "radio_events": radio_events,
           "key_events": key_events,
           "mouse_events": mouse_events,
-          "rt": response_time
+          "straightlining": straightlining,
+          "zigzagging": zigzagging
         };
 
         // Remove event listener
@@ -372,24 +381,15 @@ jsPsych.plugins['survey-template'] = (function() {
       // Don't serialize fields without a name, submits, buttons, file and reset inputs, and disabled fields
       if (!field.name || field.disabled || field.type === 'file' || field.type === 'reset' || field.type === 'submit' || field.type === 'button') continue;
 
-      // If a multi-select, get all selections
-      if (field.type === 'select-multiple') {
-        for (var n = 0; n < field.options.length; n++) {
-          if (!field.options[n].selected) continue;
-          serialized.push({
-            name: field.name,
-            value: field.options[n].value
-          });
-        }
-      }
-
       // Convert field data to a query string
-      else if ((field.type !== 'checkbox' && field.type !== 'radio') || field.checked) {
+      if ((field.type !== 'checkbox' && field.type !== 'radio') || field.checked) {
         serialized.push({
           name: field.name,
-          value: field.value
+          position: field.id,
+          value: field.value,
         });
       }
+
     }
 
     return serialized;
@@ -402,6 +402,51 @@ jsPsych.plugins['survey-template'] = (function() {
       returnArray[formArray[i]['name']] = formArray[i]['value'];
     }
     return returnArray;
+  }
+
+  // Straight-lining is defined as choosing the same response option (by position)
+  // across the entire survey. We detect this pattern by identifying the maximum
+  // percentage of responses loading onto the same item position.
+  function detectStraightLining(formArray) {
+
+    // Initialize counts
+    let counts = []
+
+    // Count number of instances per unique response
+    for (let i = 0; i < formArray.length; i++) {
+      let loc = parseInt(formArray[i]['position']);
+      if ( counts[loc] > 0 ) {
+        counts[loc]++;
+      } else {
+        counts[loc] = 1;
+      }
+    }
+
+    // Compute and return maximum fraction
+    return Math.max(...counts) / formArray.length;
+
+  }
+
+  // Zig-zagging is defined as choosing adjacent response options (by position)
+  // such that a diagonal pattern emerges across responses (i.e. the zig-zag).
+  // We detect this pattern by identifying the fraction of responses that exhibit
+  // response adjacency (including wrapping).
+  function detectZigZagging(formArray, scale) {
+
+    // Initialize score
+    let score = 0;
+
+    // Compute distance between adjacent responses
+    for (let i = 0; i < formArray.length-1; i++) {
+      let a = parseInt(formArray[i]['position']);
+      let b = parseInt(formArray[i+1]['position']);
+      let delta = Math.abs(a - b);
+      if ( delta == 1 || delta == (scale.length-1) ) { score++ };
+    }
+
+    // Compute and return fraction
+    return score / (formArray.length-1);
+
   }
 
   return plugin;
