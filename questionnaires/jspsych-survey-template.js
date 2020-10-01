@@ -306,7 +306,7 @@ jsPsych.plugins['survey-template'] = (function() {
 
     // Add event listener.
     function log_event(event) {
-      const response_time = Math.round(performance.now() - startTime);
+      const response_time = performance.now() - startTime;
       if (event.screenX > 0) {
         mouse_events.push( response_time );
       } else {
