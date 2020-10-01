@@ -43,9 +43,6 @@ Organization
     ├── substance          <- Self-report measures of substance use.
     │   ├── audit          <- Alcohol use disorders identification test
     │   
-    ├── substance          <- Self-report measures of substance use.
-    │   ├── audit          <- Alcohol use disorders identification test
-    │   
     ├── uncertainty        <- Self-report measures of uncertainty tolerance and information seeking.
     │   ├── ius12          <- Intolerance of uncertainty scale
     │   ├── nfcs           <- Need for closure scale
