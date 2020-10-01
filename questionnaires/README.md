@@ -2,9 +2,7 @@
 
 This folder contains template jsPsych code for self-report questionnaires, demographics forms, and debriefing forms.
 
-**NOTE**:
-1. Though many of these questionnaires have been tested, we cannot guarantee the code here is bug free. We encourage users to double-check questionnaire contents and outputs for typos, scoring errors, and other bugs prior to use online.
-2. The self-report measures in this folder have been contributed by members of different labs. As such, some measures may be approved under some but not all IRBs. Consult your IRB approval before using online.
+Please review the [notes](notes) section before using code in live experiments. 
 
 Organization
 ------------
@@ -85,6 +83,11 @@ The survey-debrief plugin is an extension of the [survey-data-form](https://www.
 #### jspsych-mental-health-alert
 
 The mental-health-alert plugin displays a page that provides redirects to free-to-access mental health resources for participants. Required inclusion under the Daw lab IRB for any study involving self-report symptom measures.
+
+## Notes
+Though most of the code has been tested, we cannot guarantee that it free of error. We encourage users to double-check questionnaire contents and outputs for typos, scoring errors, and other bugs prior to online use.
+
+The self-report measures in this folder have been contributed by members of different labs. As such, some measures may be approved under some but not all IRBs. Consult your IRB approval before using online.
 
 ## Contributing
 
