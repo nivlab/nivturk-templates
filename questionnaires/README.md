@@ -1,6 +1,25 @@
 # questionnaires
 
-This folder contains template jsPsych code for self-report questionnaires.
+This folder contains template jsPsych code for self-report questionnaires, demographics/debriefing forms, and general assessment measures (e.g. Raven's progressive matrices).
+
+Organization
+------------
+
+    ├── anxiety            <- Self-report measures of anxiety and related symptoms.
+    │   ├── acqr           <- Anxious control qestionnaire
+    │   ├── gad7           <- Generalized anxiety disorder scale
+    │   ├── lsas           <- Liebowitz social anxiety scale
+    │   ├── oci            <- Obsessive compulsive inventory
+    │   ├── pswq           <- Penn state worry questionnaire
+    │   ├── stai           <- State trait anxiety inventory
+    │   
+    ├── depression         <- Self-report measures of depression and related symptoms.
+    │   ├── aes            <- Apathy evaluation scale
+    │   ├── sds            <- Zung self-depression scale
+    │   ├── shaps          <- Snaith-Hamilton pleasure scale
+    │   
+    ├── eating             <- Self-report measures of eating disorders and related symptoms.
+    │   ├── eat26          <- Eating attitudes test
 
 ## jspsych-survey-template
 
