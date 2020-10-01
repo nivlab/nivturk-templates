@@ -2,7 +2,7 @@
 
 This folder contains template jsPsych code for self-report questionnaires, demographics forms, and debriefing forms.
 
-Please review the [notes](notes) section before using code in live experiments. 
+Please review the [notes](#notes) section before using code in live experiments. 
 
 Organization
 ------------
