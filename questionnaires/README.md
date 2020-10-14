@@ -2,7 +2,7 @@
 
 This folder contains template jsPsych code for self-report questionnaires, demographics forms, and debriefing forms.
 
-Please review the [notes](#notes) section before using code in live experiments. 
+Please review the [notes](#notes) section before using code in live experiments.
 
 Organization
 ------------
@@ -14,6 +14,7 @@ Organization
     │   ├── oci            <- Obsessive compulsive inventory
     │   ├── pswq           <- Penn state worry questionnaire
     │   ├── stai           <- State trait anxiety inventory
+    │   ├── sticsa         <- State-trait inventory of cognitive and somatic anxiety
     │   
     ├── depression         <- Self-report measures of depression and related symptoms.
     │   ├── aes            <- Apathy evaluation scale

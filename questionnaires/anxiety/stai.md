@@ -42,3 +42,4 @@ var stai = {
 
 ## References
 - Spielberger, C. D. (2010). State‐Trait anxiety inventory. The Corsini encyclopedia of psychology, 1-1.
+- Knowles KA, Olatunji BO (2020) Specificity of trait anxiety in anxiety and depression: Meta-analysis of the State-Trait Anxiety Inventory. Clin Psychol Rev:101928.
