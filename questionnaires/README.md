@@ -40,6 +40,7 @@ Organization
     │   ├── docs           <- Desirability of control scale
     │   ├── gse            <- General self-efficacy scale
     │   ├── nfc6           <- Need for cognition scale
+    │   ├── npoq           <- Negative problem orientation questionnaire
     │   
     ├── substance          <- Self-report measures of substance use.
     │   ├── audit          <- Alcohol use disorders identification test
