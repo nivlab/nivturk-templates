@@ -2,7 +2,7 @@
  * jspsych-survey-rpm
  * Sam Zorowitz
  *
- * plugin for running the Raven's progressive matrices
+ * plugin for running the abbreviated Raven's progressive matrices
  *
  **/
 
@@ -13,6 +13,12 @@ jsPsych.plugins['survey-rpm'] = (function() {
     name: 'survey-rpm',
     description: '',
     parameters: {
+      image_directory: {
+        type: jsPsych.plugins.parameterType.STRING,
+        pretty_name: 'Image directory',
+        default: false,
+        description: 'Path to plugin images'
+      },
       randomize_question_order: {
         type: jsPsych.plugins.parameterType.BOOL,
         pretty_name: 'Randomize question order',
@@ -70,7 +76,10 @@ jsPsych.plugins['survey-rpm'] = (function() {
     ]
 
     // Define correct options.
-    const correct = ['01e','02e','03h','04b','05e','06f','07g','08a','09b']
+    const correct = ['01e','02e','03h','04b','05e','06f','07g','08a','09b'];
+
+    // Define item weights (see doi.org/10.1177%2F1073191112446655)
+    const weights = [0.198,0.216,0.237,0.142,0.374,0.304,0.178,0.458,0.289];
 
     // ---------------------------------- //
     // Section 2: Define HTML             //
@@ -158,7 +167,7 @@ jsPsych.plugins['survey-rpm'] = (function() {
 
       // Insert prompt.
       html += '<div class="survey-rpm-prompt">';
-      html += `<img src="../static/img/rpm_${prompts[i]}_top.png"></img>`;
+      html += `<img src="${trial.image_directory}/rpm_${prompts[i]}_top.png"></img>`;
       html += '</div>';
 
       // Randomize option order.
@@ -171,7 +180,7 @@ jsPsych.plugins['survey-rpm'] = (function() {
       html += `<div class="survey-rpm-responses" id="survey-rpm-${i}" items="${option_order.length}">`;
       for (var j=0; j < option_order.length; j++) {
         html += '<div class="survey-rpm-option">';
-        html += `<label for="${option_order[j]}"><img src="../static/img/rpm_${option_order[j]}.png"></img></label>`;
+        html += `<label for="${option_order[j]}"><img src="${trial.image_directory}/rpm_${option_order[j]}.png"></img></label>`;
         html += `<input type="radio" name="${prompts[i]}" id="${option_order[j]}" value="${option_order[j]}" required>`
         html += '</div>';
       }
@@ -207,40 +216,46 @@ jsPsych.plugins['survey-rpm'] = (function() {
     // function to end trial when it is time
     var end_trial = function() {
 
-      // Measure response time
+      // Measure completion time
       var endTime = performance.now();
       var response_time = endTime - startTime;
 
-      // Gather responses
+      // Initialize variables
       var responses = [];
-      var num_errors = 0;
+      var score_raw = 0;
+      var score_adj = 0;
+      var errors = 0;
+
+      // Iteratively score responses
       for (var i=0; i<prompts.length; i++) {
 
         // Find checked option of matching question.
         var match = display_element.querySelector('#survey-rpm-'+i);
         var match = match.querySelector("input[type=radio]:checked");
 
-        // Identify checked option.
-        if(match == null) {
-          var val = '-1';
+        // Identify and store response.
+        var response = (match == null) ? -1 : match.value;
+        responses.push(response)
+
+        // Evaluate response.
+        if ( response == correct[i] ) {
+          score_raw++;
         } else {
-          var val = match.value;
-        }
-
-        // Store response
-        responses.push(val)
-
-        // Check accuracy
-        if ( correct[i] != val ) {
-          num_errors++;
+          score_adj += weights[i];
+          errors++;
         }
 
       }
 
+      // Compute adjusted score
+      score_adj = 60 - ( errors + Math.exp(1.323 + score_adj) );
+
       // store data
       var trial_data = {
         "responses": responses,
-        "num_errors": num_errors,
+        "errors": errors,
+        "score_raw": score_raw,
+        "score_adj": score_adj,
         "rt": response_time
       };
 
