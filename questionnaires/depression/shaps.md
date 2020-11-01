@@ -23,14 +23,14 @@ var shaps = {
     "I would feel pleasure when I receive praise from other people."                                             // Q14
   ],
   scale = [
-    "Strongly disagree",               // scored as 0
-    "Disagree",                        // scored as 1
-    "Agree",                           // scored as 2
-    "Strongly agree"                   // scored as 3
+    "Strongly disagree",               // scored as 3
+    "Disagree",                        // scored as 2
+    "Agree",                           // scored as 1
+    "Strongly agree"                   // scored as 0
   ],
   reverse = [
-    false, false, false, false, false, false, false,
-    false, false, false, false, false, false, false
+    true, true, true, true, true, true, true,
+    true, true, true, true, true, true, true
   ],
   instructions = 'This questionnaire is designed to measure your ability to experience pleasure in the last few days.'
 }
