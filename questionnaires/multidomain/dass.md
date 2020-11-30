@@ -4,7 +4,7 @@
 
 var dass = {
   type: 'survey-template',
-  items = [
+  items: [
     "I found it hard to wind down.",
     "I was aware of dryness of my mouth.",
     "I couldn't seem to experience any positive feeling at all.",
@@ -27,18 +27,18 @@ var dass = {
     "I felt scared without any good reason.",
     "I felt that life was meaningless."
   ],
-  scale = [
+  scale: [
     "Never",
     "Sometimes",
     "Often",
     "Almost always"
   ],
-  reverse = [
+  reverse: [
     false, false, false, false, false, false, false,
     false, false, false, false, false, false, false,
     false, false, false, false, false, false, false
   ],
-  instructions = 'Please read each statement and indicate how much the statement applied to you over the past week.'
+  instructions: 'Please read each statement and indicate how much the statement applied to you over the past week.'
 }
 
 ```
