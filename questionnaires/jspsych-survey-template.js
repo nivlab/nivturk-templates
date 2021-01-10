@@ -59,8 +59,8 @@ jsPsych.plugins['survey-template'] = (function() {
       survey_width: {
         type: jsPsych.plugins.parameterType.INT,
         pretty_name: 'Survey width',
-        default: 80,
-        description: 'The percentage of the viewport occupied by the survey'
+        default: 900,
+        description: 'The number of pixels occupied by the survey'
       },
       item_width: {
         type: jsPsych.plugins.parameterType.INT,
@@ -97,16 +97,16 @@ jsPsych.plugins['survey-template'] = (function() {
       width: 100vw;
     }
     .survey-template-instructions {
-      width: ${trial.survey_width}vw;
+      width: ${trial.survey_width}px;
       margin: auto;
-      font-size: 1.25vw;
+      font-size: 16px;
       line-height: 1.5em;
     }
     .survey-template-container {
       display: grid;
       grid-template-columns: ${x1}% repeat(${n}, ${x2}%);
       grid-template-rows: auto;
-      width: ${trial.survey_width}vw;
+      width: ${trial.survey_width}px;
       margin: auto;
       background-color: #F8F8F8;
       border-radius: 8px;
@@ -120,27 +120,27 @@ jsPsych.plugins['survey-template'] = (function() {
     .survey-template-header {
       padding: 18px 0 0px 0;
       text-align: center;
-      font-size: 1vw;
+      font-size: 14px;
       line-height: 1.15em;
     }
     .survey-template-prompt {
       padding: 12px 0 12px 15px;
       text-align: left;
-      font-size: 1.15vw;
+      font-size: 15px;
       line-height: 1.15em;
       justify-items: center;
     }
     .survey-template-response {
       padding: 12px 0 12px 0;
-      font-size: 1.15vw;
+      font-size: 13px;
       text-align: center;
       line-height: 1.15em;
       justify-items: center;
     }
     .survey-template-response input[type='radio'] {
       position: relative;
-      width: 15px;
-      height: 15px;
+      width: 16px;
+      height: 16px;
     }
     .survey-template-response .pseudo-input {
       position: relative;
@@ -153,7 +153,7 @@ jsPsych.plugins['survey-template'] = (function() {
       left: 6.5px;
       top: -6px;
       height: 2px;
-      width: calc(${trial.survey_width}vw * ${x2 / 100} - 100%);
+      width: calc(${trial.survey_width}px * ${x2 / 100} - 100%);
       background: #d8dcd6;
       content: "";
     }
@@ -162,7 +162,7 @@ jsPsych.plugins['survey-template'] = (function() {
     }
     .survey-template-footer {
       margin: auto;
-      width: ${trial.survey_width}vw;
+      width: ${trial.survey_width}px;
       padding: 0 0 0 0;
       text-align: right;
     }
@@ -174,50 +174,8 @@ jsPsych.plugins['survey-template'] = (function() {
       margin-top: 5px;
       margin-bottom: 20px;
       margin-right: 0px;
-      font-size: 1vw;
+      font-size: 13px;
       color: black;
-    }
-    @media screen and (max-width: 1200px) {
-      .survey-template-instructions {
-        width: calc(1200px * ${trial.survey_width} / 100);
-        font-size: calc(1200px * 0.0125);
-      }
-      .survey-template-container {
-        width: calc(1200px * ${trial.survey_width} / 100);
-      }
-      .survey-template-header {
-        font-size: calc(1200px * 0.0100);
-      }
-      .survey-template-prompt {
-        font-size: calc(1200px * 0.0115);
-      }
-      .survey-template-response .pseudo-input:after {
-        width: calc(1200px * ${x2 / 100} - 30px);
-      }
-      .survey-template-footer {
-        width: calc(1200px * ${trial.survey_width} / 100);
-      }
-    }
-    @media screen and (min-width: 1600px) {
-      .survey-template-instructions {
-        width: calc(1600px * ${trial.survey_width} / 100);
-        font-size: calc(1600px * 0.0125);
-      }
-      .survey-template-container {
-        width: calc(1600px * ${trial.survey_width} / 100);
-      }
-      .survey-template-header {
-        font-size: calc(1600px * 0.0100);
-      }
-      .survey-template-prompt {
-        font-size: calc(1600px * 0.0115);
-      }
-      .survey-template-response .pseudo-input:after {
-        width: calc(1600px * ${x2 / 100} - 40px);
-      }
-      .survey-template-footer {
-        width: calc(1600px * ${trial.survey_width} / 100);
-      }
     }
     </style>`;
 
@@ -410,7 +368,7 @@ jsPsych.plugins['survey-template'] = (function() {
   function detectStraightLining(formArray) {
 
     // Initialize counts
-    let counts = []
+    let counts = [];
 
     // Count number of instances per unique response
     for (let i = 0; i < formArray.length; i++) {
@@ -421,6 +379,9 @@ jsPsych.plugins['survey-template'] = (function() {
         counts[loc] = 1;
       }
     }
+
+    // Error-catching: replace empty with zero.
+    counts = Array.from(counts, item => item || 0);
 
     // Compute and return maximum fraction
     return Math.max(...counts) / formArray.length;

@@ -62,7 +62,6 @@ jsPsych.plugins['survey-debrief'] = (function() {
     .survey-debrief-prompt {
       padding: 12px 0 12px 15px;
       border-top: 2px solid #ffffff;
-
     }
     .survey-debrief-prompt label {
       padding: 0 8px 0 0;
@@ -152,21 +151,13 @@ jsPsych.plugins['survey-debrief'] = (function() {
     html += '<label><input type="radio" name="clarity" value="1" required>Very confusing</label>';
     html += '</div></div>';
 
-    // Item 4: Completed by self or not
-    html += '<div class="survey-debrief-row">';
-    html += '<div class="survey-debrief-prompt"><label for="byself">Did you complete the task on your own, without assistance from others?</label></div>';
-    html += '<div class="survey-debrief-response">';
-    html += '<label><input type="radio" name="byself" value="Yes" required>Yes</label>';
-    html += '<label><input type="radio" name="byself" value="No" required>No</label>';
-    html += '</div></div>';
-
-    // Item 5: Task strategies
+    // Item 4: Task strategies
     html += '<div class="survey-debrief-row">';
     html += '<div class="survey-debrief-prompt"><label for="strategy">Did you use any strategies during the task (e.g. write things down)?</label></div>';
     html += '<div class="survey-debrief-response"><input type="text" name="strategy"></div>';
     html += '</div>';
 
-    // Item 6: Additional comments.
+    // Item 5: Additional comments.
     html += '<div class="survey-debrief-row">';
     html += '<div class="survey-debrief-prompt"><label for="feedback">Do you have any other comments?</label></div>';
     html += '<div class="survey-debrief-response"><input type="text" name="feedback"></div>';

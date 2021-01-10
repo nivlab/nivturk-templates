@@ -36,17 +36,17 @@ jsPsych.plugins['survey-demo'] = (function() {
     }
     .survey-demo-instructions {
       margin: auto;
-      width: 75vw;
+      width: 800px;
       padding: 0 0 0 0;
       text-align: center;
-      font-size: 1.33vw;
+      font-size: 15px;
       line-height: 1.15em;
     }
     .survey-demo-container {
       display: grid;
       grid-template-columns: 40% 60%;
       grid-template-rows: auto;
-      width: 75vw;
+      width: 800px;
       margin: auto;
       background-color: #F8F8F8;
       border-radius: 12px;
@@ -55,7 +55,7 @@ jsPsych.plugins['survey-demo'] = (function() {
       display: contents;
       justify-items: center;
       text-align: left;
-      font-size: 1.33vw;
+      font-size: 16px;
       line-height: 1.5em;
     }
     .survey-demo-prompt {
@@ -75,24 +75,24 @@ jsPsych.plugins['survey-demo'] = (function() {
       display: inline-block;
     }
     .survey-demo-response input[type='radio'], input[type='checkbox'] {
-      height: 1.05vw;
-      width: 1.05vw;
+      height: 13px;
+      width: 13px;
       margin: 0 6px 0 0;
     }
     .survey-demo-response input[type='number'], input[type='text'] {
-      height: 1.5vw;
+      height: 20px;
       border: 1px solid #ccc;
       border-radius: 4px;
     }
     .survey-demo-response input[type='number'] {
-      width: 7.5%;
+      width: 40px;
     }
     .survey-demo-response input[type='text'] {
       width: 15%;
     }
     .survey-demo-footer {
       margin: auto;
-      width: 75vw;
+      width: 800px;
       padding: 0 0 0 0;
       text-align: right;
     }
@@ -104,7 +104,7 @@ jsPsych.plugins['survey-demo'] = (function() {
       margin-top: 5px;
       margin-bottom: 20px;
       margin-right: 0px;
-      font-size: 1.15vw;
+      font-size: 14px;
       color: black;
     }
     </style>`;
