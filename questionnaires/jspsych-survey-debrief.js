@@ -77,7 +77,7 @@ jsPsych.plugins['survey-debrief'] = (function() {
     }
     .survey-debrief-response input[type=text] {
       width: 60%;
-      height: 1.33vw;
+      height: 1.66vw;
       padding: 0.1em 0.2em;
       border: 1px solid #ccc;
       border-radius: 4px;
