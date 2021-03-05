@@ -4,7 +4,7 @@
 
 var ius12 = {
   type: 'survey-template',
-  items = [
+  items: [
     "Unforeseen events upset me greatly.",                                               // 5-item (uncertainty aversion)
     "It frustrates me not having all the information I need.",
     "Uncertainty keeps me from living a full life.",
@@ -18,18 +18,18 @@ var ius12 = {
     "I should be able to organize everything in advance.",                               // 5-item (predictability)
     "I must get away from all uncertain situations."
   ],
-  scale = [
+  scale:[
     "Not at all characteristic of me",
     "A little characteristic of me",
     "Somewhat characteristic of me",
     "Very characteristic of me",
     "Entirely characteristic of me"
   ],
-  reverse = [
+  reverse: [
     false, false, false, false, false, false,
     false, false, false, false, false, false
   ],
-  instructions = 'Read each statement carefully and select which best describes you.'
+  instructions: 'Read each statement carefully and select which best describes you.'
 }
 
 ```
