@@ -3,12 +3,12 @@
  *
  */
 
-jsPsych.plugins['survey-audit'] = (function() {
+jsPsych.plugins['survey-dudit'] = (function() {
 
   var plugin = {};
 
   plugin.info = {
-    name: 'survey-audit',
+    name: 'survey-dudit',
     description: '',
     parameters: {
       button_label: {
@@ -28,59 +28,64 @@ jsPsych.plugins['survey-audit'] = (function() {
     // Define items.
     const items = [
       {
-        prompt: "How often do you have a drink containing alcohol?",
-        responses: ["Never", "Monthly or less", "2-4 times a month", "2-3 times a week", "4 or more times a week"],
+        prompt: "How often do you use drugs other than alcohol?",
+        responses: ["Never", "Once a month or less often", "2-4 times a month", "2-3 times a week", "4 times a week or more often"],
         values: [0,1,2,3,4]
       },
       {
-        prompt: "How many drinks containing alcohol do you have on a typical day when you are drinking?",
-        responses: ["1 or 2", "3 or 4", "5 or 6", "7 to 9", "10 or more"],
+        prompt: "Do you use more than one type of drug on the same occasion?",
+        responses: ["Never", "Once a month or less often", "2-4 times a month", "2-3 times a week", "4 times a week or more often"],
         values: [0,1,2,3,4]
       },
       {
-        prompt: "How often do you have six or more drinks on one occasion?",
-        responses: ["Never", "Less than monthly", "Monthly", "Weekly", "Daily or almost daily"],
+        prompt: "How many times do you take drugs on a typical day when you use drugs?",
+        responses: ["0", "1-2", "3-4", "5-6", "7 or more"],
         values: [0,1,2,3,4]
       },
       {
-        prompt: "During the past year, how often have you found that you were not able to stop drinking once you had started?",
-        responses: ["Never", "Less than monthly", "Monthly", "Weekly", "Daily or almost daily"],
+        prompt: "How often are you influenced heavily by drugs?",
+        responses: ["Never", "Less often than once a month", "Every month", "Every week", "Daily or almost ever day"],
         values: [0,1,2,3,4]
       },
       {
-        prompt: "During the past year, how often have you failed to do what was normally expected of you because of drinking?",
-        responses: ["Never", "Less than monthly", "Monthly", "Weekly", "Daily or almost daily"],
+        prompt: "Over the past year, have you felt that your longing for drugs was so strong that you could not resist it?",
+        responses: ["Never", "Less often than once a month", "Every month", "Every week", "Daily or almost ever day"],
         values: [0,1,2,3,4]
       },
       {
-        prompt: "During the past year, how often have you needed a drink in the morning to get yourself going after a heavy drinking session?",
-        responses: ["Never", "Less than monthly", "Monthly", "Weekly", "Daily or almost daily"],
+        prompt: "Over the past year, has it happened that you have not been able to stop taking drugs once you started?",
+        responses: ["Never", "Less often than once a month", "Every month", "Every week", "Daily or almost ever day"],
         values: [0,1,2,3,4]
       },
       {
-        prompt: "During the past year, how often have you had a feeling of guilt or remorse after drinking?",
-        responses: ["Never", "Less than monthly", "Monthly", "Weekly", "Daily or almost daily"],
+        prompt: "How often over the past year have you taken drugs and then neglected to do something you should have done?",
+        responses: ["Never", "Less often than once a month", "Every month", "Every week", "Daily or almost ever day"],
         values: [0,1,2,3,4]
       },
       {
-        prompt: "During the past year, have you been unable to remember what happened the night before because you had been drinking?",
-        responses: ["Never", "Less than monthly", "Monthly", "Weekly", "Daily or almost daily"],
+        prompt: "How often over the past year have you needed to take a drug the morning after heavy drug use the day before?",
+        responses: ["Never", "Less often than once a month", "Every month", "Every week", "Daily or almost ever day"],
         values: [0,1,2,3,4]
       },
       {
-        prompt: "Have you or someone else been injured as a result of your drinking?",
-        responses: ["No", "Yes, but not in the last year", "Yes, during the last year"],
+        prompt: "How often over the past year have you had guilt feelings or a bad conscience because you used drugs?",
+        responses: ["Never", "Less often than once a month", "Every month", "Every week", "Daily or almost ever day"],
+        values: [0,1,2,3,4]
+      },
+      {
+        prompt: "Have you or anyone else been hurt (mentally or physically) because you used drugs?",
+        responses: ["No", "Yes, but not in the past year", "Yes, over the past year"],
         values: [0,2,4]
       },
       {
-        prompt: "Has a relative or friend or a doctor or another health worker been concerned about your drinking or suggested you cut down?",
-        responses: ["No", "Yes, but not in the last year", "Yes, during the last year"],
+        prompt: "Has a relative or a friend, a doctor or a nurse, or anyone else, been worried about your drug use or said to you that you should stop using drugs?",
+        responses: ["No", "Yes, but not in the past year", "Yes, over the past year"],
         values: [0,2,4]
       }
     ]
 
     // Define instructions.
-    const instructions = "Because alcohol use can affect your health and can interfere with certain medications and treatments, it is important that we ask some questions about your use of alcohol. Please choose the option that best describes your answer to each question.";
+    const instructions = 'Here are a few questions about drugs. Please answer as correctly and honestly as possible by indicating which answer is right for you.';
 
     //---------------------------------------//
     // Define survey HTML.
