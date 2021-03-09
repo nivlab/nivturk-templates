@@ -174,24 +174,6 @@ jsPsych.plugins['survey-demo'] = (function() {
     html += '<label><input type="radio" name="education" value="Rather not say" required>Rather not say</label>';
     html += '</div></div>';
 
-    // Item 6: English speaking
-    html += '<div class="survey-demo-row">';
-    html += '<div class="survey-demo-prompt"><label for="language">Is English your first language?</label></div>';
-    html += '<div class="survey-demo-response">';
-    html += '<label><input type="radio" name="language" value="Yes" required>Yes</label>';
-    html += '<label><input type="radio" name="language" value="No" required>No</label>';
-    html += '</div></div>';
-
-    // Item 7: Fluency
-    html += '<div class="survey-demo-row">';
-    html += '<div class="survey-demo-prompt"><label for="fluency">How well do you speak English?</label></div>';
-    html += '<div class="survey-demo-response">';
-    html += '<label><input type="radio" name="fluency" value="Very well" required>Very well</label>';
-    html += '<label><input type="radio" name="fluency" value="Well" required>Well</label>';
-    html += '<label><input type="radio" name="fluency" value="Not well" required>Not well</label>';
-    html += '<label><input type="radio" name="fluency" value="Not at all" required>Not at all</label>';
-    html += '</div></div>';
-
     // Close container.
     html += '</div>';
 
