@@ -161,22 +161,17 @@ jsPsych.plugins['survey-demo'] = (function() {
     html += '<label><input type="checkbox" name="race" value="Rather not say">Rather not say</label>';
     html += '</div></div>';
 
-    // Item 5: English speaking
+    // Item 5: Education
     html += '<div class="survey-demo-row">';
-    html += '<div class="survey-demo-prompt"><label for="language">Is English your first language?</label></div>';
+    html += '<div class="survey-demo-prompt"><label for="race">What is the highest level of schooling you have completed?</label></div>';
     html += '<div class="survey-demo-response">';
-    html += '<label><input type="radio" name="language" value="Yes" required>Yes</label>';
-    html += '<label><input type="radio" name="language" value="No" required>No</label>';
-    html += '</div></div>';
-
-    // Item 6: Fluency
-    html += '<div class="survey-demo-row">';
-    html += '<div class="survey-demo-prompt"><label for="fluency">How well do you speak English?</label></div>';
-    html += '<div class="survey-demo-response">';
-    html += '<label><input type="radio" name="fluency" value="Very well" required>Very well</label>';
-    html += '<label><input type="radio" name="fluency" value="Well" required>Well</label>';
-    html += '<label><input type="radio" name="fluency" value="Not well" required>Not well</label>';
-    html += '<label><input type="radio" name="fluency" value="Not at all" required>Not at all</label>';
+    html += '<label><input type="radio" name="education" value="Less than high school" required>Less than high school diploma</label><br>';
+    html += '<label><input type="radio" name="education" value="High school" required>High school diploma or equivalent</label><br>';
+    html += '<label><input type="radio" name="education" value="Some college" required>Some college but no degree</label><br>';
+    html += `<label><input type="radio" name="education" value="Associate degree" required>Associate's degree</label><br>`;
+    html += `<label><input type="radio" name="education" value="Bachelor degree" required>Bachelor's degree</label><br>`;
+    html += `<label><input type="radio" name="education" value="Master degree or higher" required>Master's or higher degree</label><br>`;
+    html += '<label><input type="radio" name="education" value="Rather not say" required>Rather not say</label>';
     html += '</div></div>';
 
     // Close container.
