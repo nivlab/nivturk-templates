@@ -44,6 +44,18 @@ jsPsych.plugins["mars"] = (function() {
         default: true,
         description: 'If true, accuracy feedback will be presented.'
       },
+      correct_feedback: {
+        type: jsPsych.plugins.parameterType.HTML_STRING,
+        pretty_name: 'Correct feedback',
+        default: null,
+        description: 'Feedback to display following a correct choice.'
+      },
+      incorrect_feedback: {
+        type: jsPsych.plugins.parameterType.HTML_STRING,
+        pretty_name: 'Incorrect feedback',
+        default: null,
+        description: 'Feedback to display following an incorrect choice.'
+      },
       trial_duration: {
         type: jsPsych.plugins.parameterType.INT,
         pretty_name: 'Trial duration',
@@ -81,6 +93,10 @@ jsPsych.plugins["mars"] = (function() {
       max-height: 100vh;
       overflow: hidden;
       position: fixed;
+    }
+    p {
+      margin-block-start: 0;
+      margin-block-end: 0;
     }
     .mars-container {
       width: 100vw;
@@ -173,15 +189,6 @@ jsPsych.plugins["mars"] = (function() {
     .mars-choice-row .mars-choice img:hover {
       border: 2px solid #222222;
     }
-    .mars-feedback {
-
-      /* Feedback position */
-      position: relative;
-
-      /* Feedback aesthetics */
-      font-size: 10vh;
-
-    }
     </style>`;
 
     // Initialize container.
@@ -200,9 +207,7 @@ jsPsych.plugins["mars"] = (function() {
     }
 
     // Display feedback.
-    new_html += '<div class="mars-item">';
-    new_html += '<div class="mars-feedback" id="feedback"></div>';
-    new_html += '</div>';
+    new_html += '<div class="mars-item" id="feedback"></div>';
 
     // Display responses.
     new_html += '<div class="mars-item">';
@@ -236,6 +241,14 @@ jsPsych.plugins["mars"] = (function() {
       });
     }
 
+    // define feedback
+    if ( trial.correct_feedback == null ) {
+      trial.correct_feedback = '<p style="color: green; font-size: 10vh;">&#10003</p>';
+    }
+    if ( trial.incorrect_feedback == null ) {
+      trial.incorrect_feedback = '<p style="color: red; font-size: 10vh;">&#10007</p>';
+    }
+
     // store response
     var response = {
       rt: null,
@@ -266,13 +279,9 @@ jsPsych.plugins["mars"] = (function() {
 
       // present feedback
       if ( trial.feedback && response.accuracy == 1 ) {
-        display_element.querySelector('#feedback').innerHTML = '&#10003';
-        display_element.querySelector('#feedback').style['color'] = 'green';
-        display_element.querySelector('#feedback').style['font-size'] = '10vh';
+        display_element.querySelector('#feedback').innerHTML = trial.correct_feedback;
       } else if ( trial.feedback && response.accuracy == 0 ) {
-        display_element.querySelector('#feedback').innerHTML = '&#10007';
-        display_element.querySelector('#feedback').style['color'] = 'red';
-        display_element.querySelector('#feedback').style['font-size'] = '10vh';
+        display_element.querySelector('#feedback').innerHTML = trial.incorrect_feedback;
       }
 
       // feedback timeout
