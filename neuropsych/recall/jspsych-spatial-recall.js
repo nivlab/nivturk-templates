@@ -260,7 +260,7 @@ jsPsych.plugins["spatial-recall"] = (function() {
 
       /* Hide element during sequence presentation */
       display: none;
-      
+
     }
     </style>`;
 
@@ -434,10 +434,19 @@ jsPsych.plugins["spatial-recall"] = (function() {
       var end_time = performance.now();
       var rt = end_time - start_time;
 
+      // score responses
+      var score_ls = longest_subsequence(responses, trial.sequence);
+      var score_pc = partial_credit(responses, trial.sequence);
+      var score_an = (score_pc == trial.sequence.length) ? 1 : 0;
+
       // gather the data to store for the trial
       var trial_data = {
         sequence: trial.sequence,
+        sequence_length: trial.sequence.length,
         responses: responses,
+        score_an: score_an,
+        score_pc: score_pc,
+        score_ls: score_ls,
         rt: rt
       };
 
@@ -449,6 +458,40 @@ jsPsych.plugins["spatial-recall"] = (function() {
     };
 
   };
+
+  // ---------------------------------- //
+  // Section 4: Scoring functions       //
+  // ---------------------------------- //
+
+  // Partial credit scoring
+  // scores a response as correct if it matches the sequence element
+  // in the same serial position
+  function partial_credit(observed, target) {
+    var score = 0;
+    observed.forEach((obs, i) => { if (obs == target[i]) { score++ } });
+    return score;
+  }
+
+  // Longest subsequence scoring
+  // (https://stackoverflow.com/questions/59925509/javascript-longest-common-subsequence)
+  // identifies the longest common subsequence between the observed
+  // and target sequence
+  function longest_subsequence(observed, target) {
+
+    // define n x m sized array filled with 0's
+    let matrix = [...Array(observed.length+1)].map(e => Array(target.length+1).fill(0))
+
+    // fill the matrix
+    for(let i = 1; i <= observed.length; i++) {
+        for(let j = 1; j <= target.length; j++) {
+            if(observed[i-1] == target[j-1]) { matrix[i][j] = matrix[i-1][j] + 1}
+            else matrix[i][j] = Math.max(matrix[i-1][j], matrix[i][j-1])
+        }
+    }
+
+    // return the max which is at the right bottom corner of the matrix
+    return matrix[matrix.length-1][matrix[0].length-1]
+  }
 
   return plugin;
 })();
