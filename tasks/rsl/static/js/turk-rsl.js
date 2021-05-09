@@ -49,13 +49,13 @@ jsPsych.plugins['turk-rsl'] = (function() {
       left_key: {
         type: jsPsych.plugins.parameterType.KEYCODE,
         pretty_name: 'Left key',
-        default: 'leftarrow',
+        default: 'arrowleft',
         description: 'The key to be pressed to select the left planet'
       },
       right_key: {
         type: jsPsych.plugins.parameterType.KEYCODE,
         pretty_name: 'Right key',
-        default: 'rightarrow',
+        default: 'arrowright',
         description: 'The key to be pressed to select the right planet'
       },
       choice_listen_duration: {
@@ -230,16 +230,13 @@ jsPsych.plugins['turk-rsl'] = (function() {
         response = info;
       }
 
-      // specify which key was pressed
-      response.key_char = jsPsych.pluginAPI.convertKeyCodeToKeyCharacter(info.key);
-
       // assign response variables
-      if (response.key_char == trial.left_key){
+      if (jsPsych.pluginAPI.compareKeys(trial.left_key, response.key)){
         response.choice = 'left';
         response.chosen_image = display.left_image;
         response.ur_chosen_image = trial.left_image;
         display.left_box = "selected";
-      } else if (response.key_char == trial.right_key){
+      } else if (jsPsych.pluginAPI.compareKeys(trial.right_key, response.key)){
         response.choice = 'right';
         response.chosen_image = display.right_image;
         response.ur_chosen_image = trial.right_image;
