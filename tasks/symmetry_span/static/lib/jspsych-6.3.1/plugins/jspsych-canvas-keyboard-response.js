@@ -1,30 +1,30 @@
 /**
- * jspsych-html-keyboard-response
- * Josh de Leeuw
+ * jspsych-canvas-keyboard-response
+ * Chris Jungerius (modified from Josh de Leeuw)
  *
- * plugin for displaying a stimulus and getting a keyboard response
+ * a jsPsych plugin for displaying a canvas stimulus and getting a keyboard response
  *
  * documentation: docs.jspsych.org
  *
  **/
 
 
-jsPsych.plugins["html-keyboard-response"] = (function() {
+jsPsych.plugins["canvas-keyboard-response"] = (function () {
 
   var plugin = {};
 
   plugin.info = {
-    name: 'html-keyboard-response',
+    name: 'canvas-keyboard-response',
     description: '',
     parameters: {
       stimulus: {
-        type: jsPsych.plugins.parameterType.HTML_STRING,
+        type: jsPsych.plugins.parameterType.FUNCTION,
         pretty_name: 'Stimulus',
         default: undefined,
-        description: 'The HTML string to be displayed'
+        description: 'The drawing function to apply to the canvas. Should take the canvas object as argument.'
       },
       choices: {
-        type: jsPsych.plugins.parameterType.KEYCODE,
+        type: jsPsych.plugins.parameterType.KEY,
         array: true,
         pretty_name: 'Choices',
         default: jsPsych.ALL_KEYS,
@@ -54,22 +54,29 @@ jsPsych.plugins["html-keyboard-response"] = (function() {
         default: true,
         description: 'If true, trial will end when subject makes a response.'
       },
+      canvas_size: {
+        type: jsPsych.plugins.parameterType.INT,
+        array: true,
+        pretty_name: 'Canvas size',
+        default: [500, 500],
+        description: 'Array containing the height (first value) and width (second value) of the canvas element.'
+      }
 
     }
   }
 
-  plugin.trial = function(display_element, trial) {
+  plugin.trial = function (display_element, trial) {
 
-    var new_html = '<div id="jspsych-html-keyboard-response-stimulus">'+trial.stimulus+'</div>';
-
+    var new_html = '<div id="jspsych-canvas-keyboard-response-stimulus">' + '<canvas id="jspsych-canvas-stimulus" height="' + trial.canvas_size[0] + '" width="' + trial.canvas_size[1] + '"></canvas>' + '</div>';
     // add prompt
-    if(trial.prompt !== null){
+    if (trial.prompt !== null) {
       new_html += trial.prompt;
     }
 
     // draw
     display_element.innerHTML = new_html;
-
+    let c = document.getElementById("jspsych-canvas-stimulus")
+    trial.stimulus(c)
     // store response
     var response = {
       rt: null,
@@ -77,7 +84,7 @@ jsPsych.plugins["html-keyboard-response"] = (function() {
     };
 
     // function to end trial when it is time
-    var end_trial = function() {
+    var end_trial = function () {
 
       // kill any remaining setTimeout handlers
       jsPsych.pluginAPI.clearAllTimeouts();
@@ -89,9 +96,8 @@ jsPsych.plugins["html-keyboard-response"] = (function() {
 
       // gather the data to store for the trial
       var trial_data = {
-        "rt": response.rt,
-        "stimulus": trial.stimulus,
-        "key_press": response.key
+        rt: response.rt,
+        response: response.key
       };
 
       // clear the display
@@ -102,11 +108,11 @@ jsPsych.plugins["html-keyboard-response"] = (function() {
     };
 
     // function to handle responses by the subject
-    var after_response = function(info) {
+    var after_response = function (info) {
 
       // after a valid response, the stimulus will have the CSS class 'responded'
       // which can be used to provide visual feedback that a response was recorded
-      display_element.querySelector('#jspsych-html-keyboard-response-stimulus').className += ' responded';
+      display_element.querySelector('#jspsych-canvas-keyboard-response-stimulus').className += ' responded';
 
       // only record the first response
       if (response.key == null) {
@@ -123,7 +129,7 @@ jsPsych.plugins["html-keyboard-response"] = (function() {
       var keyboardListener = jsPsych.pluginAPI.getKeyboardResponse({
         callback_function: after_response,
         valid_responses: trial.choices,
-        rt_method: 'date',
+        rt_method: 'performance',
         persist: false,
         allow_held_key: false
       });
@@ -131,14 +137,14 @@ jsPsych.plugins["html-keyboard-response"] = (function() {
 
     // hide stimulus if stimulus_duration is set
     if (trial.stimulus_duration !== null) {
-      jsPsych.pluginAPI.setTimeout(function() {
-        display_element.querySelector('#jspsych-html-keyboard-response-stimulus').style.visibility = 'hidden';
+      jsPsych.pluginAPI.setTimeout(function () {
+        display_element.querySelector('#jspsych-canvas-keyboard-response-stimulus').style.visibility = 'hidden';
       }, trial.stimulus_duration);
     }
 
     // end trial if trial_duration is set
     if (trial.trial_duration !== null) {
-      jsPsych.pluginAPI.setTimeout(function() {
+      jsPsych.pluginAPI.setTimeout(function () {
         end_trial();
       }, trial.trial_duration);
     }

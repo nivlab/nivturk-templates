@@ -28,15 +28,15 @@ jsPsych.plugins.instructions = (function() {
         description: 'Each element of the array is the content for a single page.'
       },
       key_forward: {
-        type: jsPsych.plugins.parameterType.KEYCODE,
+        type: jsPsych.plugins.parameterType.KEY,
         pretty_name: 'Key forward',
-        default: 'rightarrow',
+        default: 'ArrowRight',
         description: 'The key the subject can press in order to advance to the next page.'
       },
       key_backward: {
-        type: jsPsych.plugins.parameterType.KEYCODE,
+        type: jsPsych.plugins.parameterType.KEY,
         pretty_name: 'Key backward',
-        default: 'leftarrow',
+        default: 'ArrowLeft',
         description: 'The key that the subject can press to return to the previous page.'
       },
       allow_backward: {
@@ -63,6 +63,12 @@ jsPsych.plugins.instructions = (function() {
           default: false,
           description: 'If true, and clickable navigation is enabled, then Page x/y will be shown between the nav buttons.'
       },
+      page_label: {
+        type: jsPsych.plugins.parameterType.STRING,
+        pretty_name: 'Page label',
+        default: 'Page',
+        description: 'The text that appears before x/y (current/total) pages displayed with show_page_number'
+      },      
       button_label_previous: {
         type: jsPsych.plugins.parameterType.STRING,
         pretty_name: 'Button label previous',
@@ -84,7 +90,7 @@ jsPsych.plugins.instructions = (function() {
 
     var view_history = [];
 
-    var start_time = (new Date()).getTime();
+    var start_time = performance.now();
 
     var last_page_update_time = start_time;
 
@@ -99,38 +105,43 @@ jsPsych.plugins.instructions = (function() {
     }
 
     function show_current_page() {
-      let pagenum_display = "";
+      var html = trial.pages[current_page];
+
+      var pagenum_display = "";
       if(trial.show_page_number) {
-          pagenum_display = "Page "+(current_page+1)+"/"+trial.pages.length;
+          pagenum_display = "<span style='margin: 0 1em;' class='"+
+          "jspsych-instructions-pagenum'>"+ trial.page_label + ' ' +(current_page+1)+"/"+trial.pages.length+"</span>";
       }
-      display_element.innerHTML = trial.pages[current_page];
+     
       if (trial.show_clickable_nav) {
 
         var nav_html = "<div class='jspsych-instructions-nav' style='padding: 10px 0px;'>";
         if (trial.allow_backward) {
-          let allowed = (current_page > 0  && trial.show_page_number)? '' : "disabled='disabled'";
+          var allowed = (current_page > 0 )? '' : "disabled='disabled'";
           nav_html += "<button id='jspsych-instructions-back' class='jspsych-btn' style='margin-right: 5px;' "+allowed+">&lt; "+trial.button_label_previous+"</button>";
         }
         if (trial.pages.length > 1 && trial.show_page_number) {
-            nav_html += "<span style='margin: 0 1em;' class='"+
-                "jspsych-instructions-pagenum'>"+pagenum_display+"</span>";
+            nav_html += pagenum_display;
         }
         nav_html += "<button id='jspsych-instructions-next' class='jspsych-btn'"+
             "style='margin-left: 5px;'>"+trial.button_label_next+
             " &gt;</button></div>";
 
-        display_element.innerHTML += nav_html;
-
+        html += nav_html;
+        display_element.innerHTML = html;
         if (current_page != 0 && trial.allow_backward) {
           display_element.querySelector('#jspsych-instructions-back').addEventListener('click', btnListener);
         }
 
         display_element.querySelector('#jspsych-instructions-next').addEventListener('click', btnListener);
-      } else if (trial.show_page_number && trial.pages.length > 1) {
+      } else {
+        if (trial.show_page_number && trial.pages.length > 1) {
           // page numbers for non-mouse navigation
-          display_element.innerHTML += "<div class='jspsych-instructions-pagenum'>"+
-            pagenum_display+"</div>"
+          html += "<div class='jspsych-instructions-pagenum'>"+pagenum_display+"</div>"
+        } 
+        display_element.innerHTML = html;
       }
+      
     }
 
     function next() {
@@ -159,7 +170,7 @@ jsPsych.plugins.instructions = (function() {
 
     function add_current_page_to_view_history() {
 
-      var current_time = (new Date()).getTime();
+      var current_time = performance.now();
 
       var page_view_time = current_time - last_page_update_time;
 
@@ -180,8 +191,8 @@ jsPsych.plugins.instructions = (function() {
       display_element.innerHTML = '';
 
       var trial_data = {
-        "view_history": JSON.stringify(view_history),
-        "rt": (new Date()).getTime() - start_time
+        view_history: view_history,
+        rt: performance.now() - start_time
       };
 
       jsPsych.finishTrial(trial_data);
@@ -193,7 +204,7 @@ jsPsych.plugins.instructions = (function() {
       keyboard_listener = jsPsych.pluginAPI.getKeyboardResponse({
         callback_function: after_response,
         valid_responses: [trial.key_forward, trial.key_backward],
-        rt_method: 'date',
+        rt_method: 'performance',
         persist: false,
         allow_held_key: false
       });
@@ -216,7 +227,7 @@ jsPsych.plugins.instructions = (function() {
       var keyboard_listener = jsPsych.pluginAPI.getKeyboardResponse({
         callback_function: after_response,
         valid_responses: [trial.key_forward, trial.key_backward],
-        rt_method: 'date',
+        rt_method: 'performance',
         persist: false
       });
     }

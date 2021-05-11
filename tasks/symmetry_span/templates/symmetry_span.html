@@ -4,21 +4,24 @@
   <title>WM symmetry span task</title>
 
   <!-- Load libraries -->
-  <script src="../static/lib/jspsych-6.0.4/jspsych.js"></script>
-  <script src="../static/lib/jspsych-6.0.4/plugins/jspsych-html-keyboard-response.js"></script>
-  <script src="../static/lib/jspsych-6.0.4/plugins/jspsych-symmetry-judgement-task-display.js"></script>
-  <script src="../static/lib/jspsych-6.0.4/plugins/jspsych-symmetry-judgement-task-response.js"></script>
-  <script src="../static/lib/jspsych-6.0.4/plugins/jspsych-instructions.js"></script>
-  <script src="../static/lib/jspsych-6.0.4/plugins/jspsych-spatial-span.js"></script>
-  <script src="../static/lib/jspsych-6.0.4/plugins/jspsych-spatial-span-recall.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
+  <script src="../static/lib/jspsych-6.3.1/jspsych.js"></script>
   <script src="../static/lib/jquery-3.3.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
+
+  <!-- Load jspsych plugins -->
+  <script src="../static/lib/jspsych-6.3.1/plugins/jspsych-html-keyboard-response.js"></script>
+  <script src="../static/lib/jspsych-6.3.1/plugins/jspsych-instructions.js"></script>
+  <script src="../static/lib/jspsych-6.3.1/plugins/jspsych-preload.js"></script>
+  <script src="../static/js/jspsych-symmetry-judgement-task-display.js"></script>
+  <script src="../static/js/jspsych-symmetry-judgement-task-response.js"></script>
+  <script src="../static/js/jspsych-spatial-span.js"></script>
+  <script src="../static/js/jspsych-spatial-span-recall.js"></script>
 
   <!-- Load js scripts -->
   <script src="../static/js/engle_stimuli.js"></script>
 
   <!-- Load CSS styles -->
-  <link href="../static/lib/jspsych-6.0.4/css/jspsych_grid.css" rel="stylesheet" type="text/css">
+  <link href="../static/css/jspsych_grid.css" rel="stylesheet" type="text/css">
 
   </link>
 </head>
@@ -111,8 +114,7 @@
       pageThree = '<div style="font-size:20px; text-align:left">When you have selected all the squares, and they are in the correct order,<br> click the "Confirm" button at the bottom right of the screen.<br><br> If you make a mistake, click the "Backspace" button to remove the last selection.<br><br>If you forget one of the squares, click the "Blank" button to mark the spot for the missing square.<br><br> Remember, it is very important to get the squares <b>in the same order</b> as you saw them.<br><br><br> When you\'re ready, click "Next" to start the square practice.<br><br></div>'
       return [pageOne, pageTwo, pageThree]
     },
-    allow_backward: false,
-    button_label_next: "Next",
+    allow_backward: true,
     show_clickable_nav: true
   }
 
@@ -128,8 +130,7 @@
       pageSeven = '<div style="font-size:20px; text-align:left">It is very important that you get the pictures correct.<br><br> When you are ready, click "Next" to try some practice problems. <br><br> </div>'
       return [pageOne, pageTwo, pageThree, pageFour, pageFive, pageSix, pageSeven]
     },
-    allow_backward: false,
-    button_label_next: "Next",
+    allow_backward: true,
     show_clickable_nav: true
   }
 
@@ -142,8 +143,7 @@
       pageFour = '<div style="font-size:20px; text-align:left">Remember to work both <b>quickly</b> and <b>accurately</b>.<br><br>Please <b>do not</b> take any notes during the task.<br><br>Click "Next" to try some practice problems.<br><br></div>'
       return [pageOne, pageTwo, pageThree, pageFour]
     },
-    allow_backward: false,
-    button_label_next: "Next",
+    allow_backward: true,
     show_clickable_nav: true
   }
 
@@ -153,8 +153,7 @@
       pageOne = '<div style="font-size:20px; text-align:left">This is the end of the practice.<br><br>The real trials will just look like the practice trials you just completed.<br><br>Some sets will have more problems than others.<br><br>It is important that you do your best on both the symmetry and the square parts of the task.<br><br>Please do not take notes during the task.<br><br>Click "Next" to begin the task.<br><br></div>'
       return [pageOne]
     },
-    allow_backward: false,
-    button_label_next: "Next",
+    allow_backward: true,
     show_clickable_nav: true
   }
 
@@ -428,11 +427,25 @@
     repetitions: nfullDemo
   }
 
-  timeline = [instructions, squaresDemo, instructions2, symmetryDemo, instructions3, fullDemo, instructions4, test_procedure]
+  var preload = {
+    type: 'preload',
+    images: [
+      "../static/img/symmetrySpanExampleGridEmpty.png",
+      "../static/img/instructions1.png",
+      "../static/img/instructions2.png",
+      "../static/img/instructions3.png",
+      "../static/img/instructions4.png",
+      "../static/img/blackbox.png",
+      "../static/img/whitebox.png",
+      "../static/img/whitegrid.png",
+    ],
+  }
+
+  timeline = [preload, instructions, squaresDemo, instructions2, symmetryDemo, instructions3, fullDemo, instructions4, test_procedure]
   if (mode == 'debug') {
     timeline.push(dataLog)
   }
-  
+
   // Initialize timeline.
   jsPsych.init({
     timeline: timeline,
