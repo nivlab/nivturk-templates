@@ -112,19 +112,6 @@ jsPsych.plugins["symmetry-judgement-task-display"] = (function () {
         blackBoxes = boxes.concat(boxesAdd)
       }
 
-      //    var removeBox = jsPsych.randomization.sampleWithoutReplacement(blackBoxes, 2);
-      //    var blackBoxesAdd = [];
-      //    for (var i=0; i<2; i++){
-      //      id1 = blackBoxes.indexOf(removeBox[i]);
-      //      blackBoxes.splice(id1,1);
-      //      var blackBoxes1=blackBoxes;
-      //      id2 = matrix.indexOf(removeBox[i]);
-      //      blackBoxesAdd.push(matrix2[id2])
-      //    }
-      //    blackBoxes = []
-      //    blackBoxes = blackBoxes1.concat(blackBoxesAdd)
-      //  }
-
       var blackBoxesFinal = blackBoxes.concat(blackBoxesSymmetric)
 
     }
@@ -144,7 +131,6 @@ jsPsych.plugins["symmetry-judgement-task-display"] = (function () {
 
     display_element.innerHTML = '<div id="jspsych-visual-search-circle-container" style= "position: relative; width:' + paper_size + 'px; height:' + paper_size + 'px"></div>';
     var paper = display_element.querySelector("#jspsych-visual-search-circle-container");
-
 
     for (i = 0; i < matrix.length; i++) {
       paper.innerHTML += '<img src="../static/img/whitebox.png" style="position: absolute; top:' + matrix[i][0] * (trial.size_cells - 2) + 'px; left:' + matrix[i][1] * (trial.size_cells - 2) + 'px; width:' + trial.size_cells + 'px; height:' + trial.size_cells + 'px;"></img>';

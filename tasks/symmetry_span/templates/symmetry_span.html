@@ -12,6 +12,7 @@
   <script src="../static/lib/jspsych-6.3.1/plugins/jspsych-html-keyboard-response.js"></script>
   <script src="../static/lib/jspsych-6.3.1/plugins/jspsych-instructions.js"></script>
   <script src="../static/lib/jspsych-6.3.1/plugins/jspsych-preload.js"></script>
+  <script src="../static/js/jspsych-symmetry-judgement-task.js"></script>
   <script src="../static/js/jspsych-symmetry-judgement-task-display.js"></script>
   <script src="../static/js/jspsych-symmetry-judgement-task-response.js"></script>
   <script src="../static/js/jspsych-spatial-span.js"></script>
@@ -37,6 +38,7 @@
   randomize = false // present different set sizes in random order. if false, set sizes will be presented in ascending order (as in Engle lab version)
   mode = 'experiment' // 'experiment' or 'debug'. if in debug mode, save the data file locally
   engle_stimuli = true  // whether to use Engle lab symmetry stimuli; if false, use randomly-generated symmetry stimuli
+  symmetry_onepage = false  // whether to keep the symmetry judgement task as one page or split into two pages
   fixed_timeout = false  // whether to use fixed timeout time for symmetry judgement task
 
   //----------------------------------------------------------------------
@@ -84,7 +86,7 @@
   var i_symm_demo = 0  // keeps track symmetry demo trial index
   var i_symm = 0  // keeps track of symmetry trial index
 
-  var symm_demo_rt_display = []
+  var symm_demo_rt = []
 
   if (engle_stimuli) {  // symm_stimuli_demo and symm_stimuli read in from engle_stimul.js
 
@@ -126,7 +128,11 @@
       pageThree = '<div style="font-size:20px;"><img src="../static/img/instructions2.png" style="height:300px; width:300px"></img> <br><br> Here, the picture is NOT symmetrical.<br> If you folded this across the red line,<br> the boxes would NOT line up. <br><br></div>'
       pageFour = '<div style="font-size:20px;"><img src="../static/img/instructions3.png" style="height:300px; width:300px"></img> <br><br> This is another example of a picture that IS symmetrical.<br> If you folded it vertically, the two sides would line up.<br><br> </div>'
       pageFive = '<div style="font-size:20px;"><img src="../static/img/instructions4.png" style="height:300px; width:300px"></img> <br><br> Here is another example of a picture that is NOT symmetrical.<br>Notice that if folded, the two sides would not line up. <br><br> </div>'
-      pageSix = '<div style="font-size:20px; text-align:left">Once you have decided if the picture is symmetrical, click on the picture to proceed.<br><br> On the next screen, a "YES" and "NO" button will appear.<br><br> If the picture you saw was symmetrical, click the "YES" button.<br><br> If it was not symmetrical, click the "NO" button.<br><br> After you click on one of the buttons, the computer will tell you if you made the right choice.<br><br> </div>'
+      if (symmetry_onepage) {
+        pageSix = '<div style="font-size:20px; text-align:left">If the picture you saw was symmetrical, click the "YES" button.<br><br> If it was not symmetrical, click the "NO" button.<br><br> After you click on one of the buttons, the computer will tell you if you made the right choice.<br><br> </div>'
+      } else {
+        pageSix = '<div style="font-size:20px; text-align:left">Once you have decided if the picture is symmetrical, click on the picture to proceed.<br><br> On the next screen, a "YES" and "NO" button will appear.<br><br> If the picture you saw was symmetrical, click the "YES" button.<br><br> If it was not symmetrical, click the "NO" button.<br><br> After you click on one of the buttons, the computer will tell you if you made the right choice.<br><br> </div>'
+      }
       pageSeven = '<div style="font-size:20px; text-align:left">It is very important that you get the pictures correct.<br><br> When you are ready, click "Next" to try some practice problems. <br><br> </div>'
       return [pageOne, pageTwo, pageThree, pageFour, pageFive, pageSix, pageSeven]
     },
@@ -158,35 +164,34 @@
   }
 
 
-  var nProportionDemo = 0
   var cog_load_demo_onepage = {
     type: 'symmetry-judgement-task',
     size: 8,
     trial_duration: null,
     number_darkened: [17, 18, 19],
     stimulus: "Is this symmetrical?",
-    proportion: function () {
-      nProportionDemo += 1
-      if (nProportionDemo == 1) {
-        return 1
-      } else if (nProportionDemo == 2) {
-        return 0
-      } else {
-        return 0.5
-      }
-    },
     stimulus_name: function () { return "pracsymm" + symm_shuffled_index_demo[i_symm_demo].toString() },
     stimulus_symmetry: function () { return symm_answer_demo[symm_shuffled_index_demo[i_symm_demo]] },
     black_boxes: function () { return symm_stimuli_demo[symm_shuffled_index_demo[i_symm_demo]] },
     on_finish: function () {
       i_symm_demo += 1
+      var rt = jsPsych.data.get().last(1).values()[0].rt;
+      symm_demo_rt.push(rt);
     }
   }
 
   var cog_load_onepage = {
     type: 'symmetry-judgement-task',
     size: 8,
-    trial_duration: 5000,
+    trial_duration: function () {
+      if (fixed_timeout) {
+        return 5000;
+      } else {
+        var mean_rt = jStat.mean(symm_demo_rt);
+        var sd_rt = jStat.stdev(symm_demo_rt);
+        return jStat.min([500 + mean_rt + 2.5 * sd_rt, 5000]);
+      }
+    },
     number_darkened: [17, 18, 19],
     stimulus: "Is this symmetrical?",
     stimulus_name: function () { return "symm" + symm_shuffled_index[i_symm].toString() },
@@ -196,7 +201,9 @@
       var acc = jsPsych.data.get().last(1).values()[0].accuracy;
       if (acc == 1) {
         nSymmetryAcc += 1
+        nSymmetryCorrectTotal += 1
       }
+      nSymmetryTotal += 1
       i_symm += 1
     },
   }
@@ -212,7 +219,7 @@
     on_finish: function () {
       i_symm_demo += 1
       var rt = jsPsych.data.get().last(1).values()[0].rt;
-      symm_demo_rt_display.push(rt);
+      symm_demo_rt.push(rt);
     }
   }
 
@@ -231,8 +238,8 @@
       if (fixed_timeout) {
         return 5000;
       } else {
-        var mean_rt = jStat.mean(symm_demo_rt_display);
-        var sd_rt = jStat.stdev(symm_demo_rt_display);
+        var mean_rt = jStat.mean(symm_demo_rt);
+        var sd_rt = jStat.stdev(symm_demo_rt);
         return jStat.min([500 + mean_rt + 2.5 * sd_rt, 5000]);
       }
     },
@@ -360,11 +367,16 @@
   var feedbackSymm = {
     type: 'html-keyboard-response',
     stimulus: function () {
-      var stimulus = jsPsych.data.get().last(2).values()[0].stimulus_symmetry
-      var choice = jsPsych.data.get().last(1).values()[0].choice_symmetry
-      console.log(stimulus)
-      console.log(choice)
-      var accuracy = stimulus == choice
+      if (symmetry_onepage) {
+        var accuracy = jsPsych.data.get().last(1).values()[0].accuracy
+      }
+      else {
+        var stimulus = jsPsych.data.get().last(2).values()[0].stimulus_symmetry
+        var choice = jsPsych.data.get().last(1).values()[0].choice_symmetry
+        console.log(stimulus)
+        console.log(choice)
+        var accuracy = stimulus == choice
+      }
       var text = ""
       if (accuracy == 1) {
         text += '<div style="font-size:35px; color:rgb(0 220 0)"><b>Correct</div>'
@@ -384,17 +396,23 @@
     trial_duration: 100,
     on_finish: function (data) {
       // save data locally
-      var data = jsPsych.data.get().filter([{ trial_type: 'spatial-span-recall' }, { trial_type: 'symmetry-judgement-task-display' }, { trial_type: 'symmetry-judgement-task-response' }]);
+      var data = jsPsych.data.get().filter([{ trial_type: 'spatial-span-recall' }, { trial_type: 'symmetry-judgement-task' }, { trial_type: 'symmetry-judgement-task-display' }, { trial_type: 'symmetry-judgement-task-response' }]);
       file_name = "WM_symmetry_span_" + IDsub.toString() + ".csv"
       data.localSave('csv', file_name)
     }
   }
 
-  var cog_load = {
-    timeline: [cog_load_display, cog_load_response],
+  if (symmetry_onepage) {
+    cog_load = cog_load_onepage
+    cog_load_demo = cog_load_demo_onepage
   }
-  var cog_load_demo = {
-    timeline: [cog_load_demo_display, cog_load_demo_response],
+  else {
+    var cog_load = {
+      timeline: [cog_load_display, cog_load_response],
+    }
+    var cog_load_demo = {
+      timeline: [cog_load_demo_display, cog_load_demo_response],
+    }
   }
 
   var test_stack = {

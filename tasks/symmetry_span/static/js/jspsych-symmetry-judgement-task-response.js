@@ -96,7 +96,7 @@ jsPsych.plugins["symmetry-judgement-task-response"] = (function () {
     };
 
     function after_response(choice) {
-      // measure rt
+      // measure rt and choice
       var end_time = Date.now();
       data.rt = end_time - start_time;
       data.choice_symmetry = trial.choices[choice] == 'YES';
