@@ -177,10 +177,20 @@ jsPsych.plugins['survey-template'] = (function() {
       font-size: 13px;
       color: black;
     }
+    /* honeypot css */
+    .survey-template-block {
+      position: absolute;
+      top: 0%;
+      -webkit-transform: translate3d(0, -100%, 0);
+      transform: translate3d(0, -100%, 0);
+    }
     </style>`;
 
     // Initialize survey.
-    html += '<div class="survey-template-wrap"><form name="survey-template" id="survey-template-submit">';
+    html += '<div class="survey-template-wrap">';
+
+    // Initialize form.
+    html += '<form name="survey-template" id="survey-template-submit">';
 
     // Add instructions.
     html += '<div class="survey-template-instructions" id="instructions">';
@@ -242,8 +252,20 @@ jsPsych.plugins['survey-template'] = (function() {
     html += `<input type="submit" value="${trial.button_label}"></input>`;
     html += '</div>';
 
+    // End form.
+    html += '</form>';
+
+    // Add honeypot.
+    html += '<div class="survey-template-block" tabindex="-1">';
+    html += '<form id="survey-template-form">';
+    html += `<input type="radio" name="Q00" value="0" tabindex="-1">`;
+    html += `<input type="radio" name="Q00" value="1" tabindex="-1">`;
+    html += `<input type="radio" name="Q00" value="2" tabindex="-1">`;
+    html += '</form>';
+    html += '</div>';
+
     // End survey.
-    html += '</form></div>';
+    html += '</div>';
 
     // Display HTML
     display_element.innerHTML = html;
@@ -295,6 +317,10 @@ jsPsych.plugins['survey-template'] = (function() {
         var straightlining = detectStraightLining(question_data);
         var zigzagging = detectZigZagging(question_data, trial.scale);
 
+        // Check honeypot.
+        var honeypot = serializeArray(display_element.querySelector('#survey-template-form'));
+        honeypot = (honeypot.length > 0) ? 1 : 0;
+
         // Store data
         var trialdata = {
           "responses": responses,
@@ -304,7 +330,8 @@ jsPsych.plugins['survey-template'] = (function() {
           "key_events": key_events,
           "mouse_events": mouse_events,
           "straightlining": straightlining,
-          "zigzagging": zigzagging
+          "zigzagging": zigzagging,
+          "honeypot": honeypot
         };
 
         // Remove event listener
