@@ -27,7 +27,7 @@ jsPsych.plugins['rpm'] = (function() {
       correct: {
         type: jsPsych.plugins.parameterType.INT,
         pretty_name: 'Correct',
-        description: 'The index of the correct response.'
+        description: 'The index of the correct response (0-indexed).'
       },
       countdown: {
         type: jsPsych.plugins.parameterType.BOOL,
@@ -66,16 +66,9 @@ jsPsych.plugins['rpm'] = (function() {
 
     // Calculate grid layout.
     const nrow = Math.ceil( trial.choices.length / trial.col_wrap );
-    console.log(nrow)
 
     // Insert CSS.
     new_html += `<style>
-    body {
-      height: 100vh;
-      max-height: 100vh;
-      overflow: hidden;
-      position: fixed;
-    }
     .rpm-container {
       width: 100vw;
       height: 100vh;
@@ -227,24 +220,15 @@ jsPsych.plugins['rpm'] = (function() {
 
       // measure response time
       var end_time = performance.now();
-      var rt = end_time - start_time;
+      var rt = (end_time - start_time) / 1000;
 
       // store responses.
       response.rt = rt;
       response.choice = parseInt(choice);
       response.accuracy = (trial.correct == response.choice) ? 1 : 0;
 
-      // present feedback
-      if ( trial.feedback && response.accuracy == 1 ) {
-        display_element.querySelector('#feedback').innerHTML = trial.correct_feedback;
-      } else if ( trial.feedback && response.accuracy == 0 ) {
-        display_element.querySelector('#feedback').innerHTML = trial.incorrect_feedback;
-      }
-
-      // feedback timeout
-      jsPsych.pluginAPI.setTimeout(function() {
-        end_trial();
-      }, trial.feedback ? trial.feedback_duration : 0);
+      // end trial
+      end_trial();
 
     };
 

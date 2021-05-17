@@ -159,37 +159,48 @@ if ( test_form == 1 ) {
 var rpm_task = {
   type: 'rpm',
   countdown: true,
-  randomize_choice_order: false,
-  trial_duration: null,
+  randomize_choice_order: true,
+  trial_duration: trial_duration,
   timeline: rpm_info,
   data: {test_form: test_form}
 }
 
 //------------------------------------//
-// Define quality check.
+// Define RPM scoring.
 //------------------------------------//
+
+var dot_product = function(x, y) {
+  var sum = 0;
+  for (let i = 0; i < x.length; i++) { sum += x[i] * y[i]; }
+  return sum;
+}
 
 var score_rpm = function() {
 
-  // Get completion time.
-  var rt = jsPsych.data.get().filter({survey: 'rpm'}).select('rt').values[0] / 1000.;
+  // Summarize RPM.
+  const rpm_raw = jsPsych.data.get().filter({trial_type: 'rpm'}).select('accuracy').sum();
+  const rpm_err = 9 - rpm_raw;
+  const rpm_rt = jsPsych.data.get().filter({trial_type: 'rpm'}).select('rt').sum();
 
-  // Score completion time.
-  if (rt < 15) {
-    low_quality = true;
-  } else {
-    low_quality = false;
+  // Fetch accuracy.
+  var accuracy = jsPsych.data.get().filter({trial_type: 'rpm'}).select('accuracy').values;
+  var errors = accuracy.map(x => 1 - x);
+
+  // Score RPM (Bilker et al. 2012).
+  if (test_form == 1) {
+    const weights = [0.198,0.216,0.237,0.142,0.374,0.304,0.178,0.458,0.289];
+    var rpm_adj = 60 - (rpm_err + Math.exp(1.323 + dot_product(errors, weights)));
+  } else if (test_form == 2) {
+    const weights = [0.168,0.212,0.247,0.189,0.203,0.135,0.243,0.316,0.193];
+    var rpm_adj = 60 - (rpm_err + Math.exp(1.875 + dot_product(errors, weights)));
   }
 
-  return low_quality;
+  return {rpm_raw: rpm_raw, rpm_err: rpm_err, rpm_adj:rpm_adj, rpm_rt: rpm_rt};
 }
 
 var rpm_score = {
   type: 'call-function',
-  func: score_rpm,
-  on_finish: function(trial) {
-    low_quality = jsPsych.data.getLastTrialData().values()[0].value;
-  }
+  func: score_rpm
 }
 
 //------------------------------------//
@@ -197,5 +208,5 @@ var rpm_score = {
 //------------------------------------//
 
 var RPM = {
-  timeline: [rpm_instructions, rpm_task, rpm_score]
+  timeline: [rpm_task, rpm_score]
 }
