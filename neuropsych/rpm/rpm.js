@@ -33,6 +33,7 @@ var rpm_instructions = {
 // Define test forms.
 if ( test_form == 1 ) {
 
+  // Define task timeline
   var rpm_info = [
     {
       stimulus: img_dir + '/a11.png',
@@ -90,8 +91,31 @@ if ( test_form == 1 ) {
     },
   ]
 
+  // Define images to preload
+  var preload_images = [
+    img_dir + '/a11.png',
+    img_dir + '/a24.png',
+    img_dir + '/a28.png',
+    img_dir + '/a36.png',
+    img_dir + '/a43.png',
+    img_dir + '/a48.png',
+    img_dir + '/a49.png',
+    img_dir + '/a53.png',
+    img_dir + '/a55.png',
+    [...Array(6).keys()].map(i => img_dir + '/a11_' + (i+1) + '.png'),
+    [...Array(6).keys()].map(i => img_dir + '/a24_' + (i+1) + '.png'),
+    [...Array(8).keys()].map(i => img_dir + '/a28_' + (i+1) + '.png'),
+    [...Array(8).keys()].map(i => img_dir + '/a36_' + (i+1) + '.png'),
+    [...Array(8).keys()].map(i => img_dir + '/a43_' + (i+1) + '.png'),
+    [...Array(8).keys()].map(i => img_dir + '/a48_' + (i+1) + '.png'),
+    [...Array(8).keys()].map(i => img_dir + '/a49_' + (i+1) + '.png'),
+    [...Array(8).keys()].map(i => img_dir + '/a53_' + (i+1) + '.png'),
+    [...Array(8).keys()].map(i => img_dir + '/a55_' + (i+1) + '.png')
+  ];
+
 } else if (test_form == 2) {
 
+  // Define task timeline
   var rpm_info = [
     {
       stimulus: img_dir + '/b10.png',
@@ -148,6 +172,28 @@ if ( test_form == 1 ) {
       col_wrap: 4
     },
   ]
+
+  // Define images to preload
+  var preload_images = [
+    img_dir + '/b10.png',
+    img_dir + '/b16.png',
+    img_dir + '/b21.png',
+    img_dir + '/b30.png',
+    img_dir + '/b34.png',
+    img_dir + '/b44.png',
+    img_dir + '/b50.png',
+    img_dir + '/b52.png',
+    img_dir + '/b57.png',
+    [...Array(6).keys()].map(i => img_dir + '/b10_' + (i+1) + '.png'),
+    [...Array(6).keys()].map(i => img_dir + '/b16_' + (i+1) + '.png'),
+    [...Array(6).keys()].map(i => img_dir + '/b21_' + (i+1) + '.png'),
+    [...Array(8).keys()].map(i => img_dir + '/b30_' + (i+1) + '.png'),
+    [...Array(8).keys()].map(i => img_dir + '/b34_' + (i+1) + '.png'),
+    [...Array(8).keys()].map(i => img_dir + '/b44_' + (i+1) + '.png'),
+    [...Array(8).keys()].map(i => img_dir + '/b50_' + (i+1) + '.png'),
+    [...Array(8).keys()].map(i => img_dir + '/b52_' + (i+1) + '.png'),
+    [...Array(8).keys()].map(i => img_dir + '/b57_' + (i+1) + '.png'),
+  ];
 
 } else {
   throw 'test form "' + test_form + '" is not valid.'
