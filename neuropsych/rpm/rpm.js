@@ -15,18 +15,15 @@ const img_dir = '../static/img';
 // Define RPM instructions.
 //------------------------------------//
 
-// Raven's progressive matrices instructions
 var rpm_instructions = {
   type: 'instructions',
   pages: [
-    "<h3>PUZZLE TASK</h3><p style='width: 60vw; text-align: center'>On the next page, you will be presented with 9 puzzles. For each puzzle, your task is to <b>identify the missing piece</b> from the options appearing below the puzzle.</p><p style='width: 60vw; text-align: center'>You will have <b>6 minutes</b> to complete the task. Not everyone finishes in time<br>or answers every question correctly - just do the best you can.</p><p>Click next to start the task.</p>"
+    "<p>We are beginning the <b>puzzle task</b>.</p><p>In this task, you will be shown a series of puzzles. For each puzzle, your goal is to<br>identify the missing piece from the options appearing below the puzzle.</p>",
+    '<p>There are 9 puzzles in total. You will have <b>30 seconds</b> for each puzzle.</p><p>Try to be as accurate as possible. If you cannot solve the puzzle then you should guess.<br>You will not be penalized for an incorrect answer.</p><p>Press the "next" button to get started.</p>'
   ],
   show_clickable_nav: true,
   button_label_previous: 'Prev',
   button_label_next: 'Next',
-  on_finish: function(trial) {
-    pass_message('starting rpm');
-  }
 }
 
 //------------------------------------//
@@ -208,5 +205,5 @@ var rpm_score = {
 //------------------------------------//
 
 var RPM = {
-  timeline: [rpm_task, rpm_score]
+  timeline: [rpm_instructions, rpm_task, rpm_score]
 }
