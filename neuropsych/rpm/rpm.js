@@ -3,7 +3,7 @@
 //------------------------------------//
 
 // Define test form.
-const test_form = 2;              // Available [1,2]
+const test_form = 1;              // Available [1,2]
 
 // Define timing parameters.
 const trial_duration = 30000;     // 30 seconds
