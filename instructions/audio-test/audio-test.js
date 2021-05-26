@@ -7,8 +7,6 @@
  *
  **/
 
-
-  // prevent the form from being submitted if the enter key is pressed
  	function noenter() {
 	  return !(window.event && window.event.keyCode == 13);
 	}
@@ -25,7 +23,7 @@ jsPsych.plugins["audio-test"] = (function() {
 			stimulus: {
 				type: jsPsych.plugins.parameterType.AUDIO,
         pretty_name: 'Stimulus',
-				default: ['static/audio/audio1.mp3', 'static/audio/audio2.mp3', 'static/audio/audio3.mp3','static/audio/audio4.mp3'],
+				default: undefined,
 				description: 'The array of audio stimuli to be played.'
 			},
       correct_responses: {
@@ -57,28 +55,36 @@ jsPsych.plugins["audio-test"] = (function() {
       prompt: {
         type: jsPsych.plugins.parameterType.STRING,
         pretty_name: 'Prompt',
-        default: '<br>If you are unable to hear the word, you should return this HIT.',
+        default: '<br>If you are unable to hear the word, you should return this experiment.',
       }
     }
   }
 
   plugin.trial = function(display_element, trial) {
 
+
     var context = jsPsych.pluginAPI.audioContext();
     var audio_ix = jsPsych.randomization.sampleWithReplacement([0,1,2,3], 1);
 
-    // setup stimulus
-    if(context !== null){
-      var source = context.createBufferSource();
-      source.buffer = jsPsych.pluginAPI.getAudioBuffer(trial.stimulus[audio_ix]);
-      source.connect(context.destination);
-    } else {
-      var audio = jsPsych.pluginAPI.getAudioBuffer(trial.stimulus[audio_ix]);
-      audio.currentTime = 0;
-    }
+    // load audio file
+    jsPsych.pluginAPI.getAudioBuffer(trial.stimulus[audio_ix])
+      .then(function (buffer) {
+        if (context !== null) {
+          audio = context.createBufferSource();
+          audio.buffer = buffer;
+          audio.connect(context.destination);
+        } else {
+          audio = buffer;
+          audio.currentTime = 0;
+        }
+      })
+      .catch(function (err) {
+        console.error(`Failed to load audio file "${trial.stimulus}". Try checking the file path. We recommend using the preload plugin to load audio files.`)
+        console.error(err)
+      });
 
     // display stimulus
-    var html = '<div id="jspsych-html-button-response-stimulus">In order to complete this HIT, you will need to have your computer audio on. If you do not have computer audio, you will not be able to complete this HIT.<br><br>We will now test your audio. When you press the button below, you will hear a word being spoken.<br><br>On the following screen, we will ask you to tell us what word you heard. This allows us to verify that your audio is working. </div>';
+    var html = '<div id="jspsych-html-button-response-stimulus">In order to complete this eperiment, you will need to have your computer audio on. If you do not have computer audio, you will not be able to complete this experiment.<br><br>We will now test your audio. When you press the button below, you will hear a word being spoken.<br><br>On the following screen, we will ask you to tell us what word you heard. This allows us to verify that your audio is working. </div>';
 
     //display buttons
     str = '<button class="jspsych-btn">Continue</button>';
@@ -127,9 +133,9 @@ jsPsych.plugins["audio-test"] = (function() {
       var start_time = performance.now();
 
       // start audio
-      if(context !== null){
+      if (context !== null) {
         startTime = context.currentTime;
-        source.start(startTime);
+        audio.start(startTime);
       } else {
         audio.play();
       }
@@ -140,16 +146,23 @@ jsPsych.plugins["audio-test"] = (function() {
       });
 
       display_element.querySelector('#jspsych-audio-button-response-button-1').addEventListener('click', function(e){
-        // start audio
-        if(context !== null){
-          var source = context.createBufferSource();
-          source.buffer = jsPsych.pluginAPI.getAudioBuffer(trial.stimulus[audio_ix]);
-          source.connect(context.destination);
-          startTime = context.currentTime;
-          source.start(startTime);
-        } else {
-          audio.play();
-        };
+        // load audio file
+        jsPsych.pluginAPI.getAudioBuffer(trial.stimulus[audio_ix])
+          .then(function (buffer) {
+            if (context !== null) {
+              audio = context.createBufferSource();
+              audio.buffer = buffer;
+              audio.connect(context.destination);
+              startTime = context.currentTime;
+              audio.start(startTime);
+            } else {
+              audio.play()
+            }
+          })
+          .catch(function (err) {
+            console.error(`Failed to load audio file "${trial.stimulus}". Try checking the file path. We recommend using the preload plugin to load audio files.`)
+            console.error(err)
+          });
       });
 
     };
@@ -160,7 +173,7 @@ jsPsych.plugins["audio-test"] = (function() {
       if (input_val.toUpperCase().trim() === trial.correct_responses[audio_ix].toUpperCase()){
         end_trial();
       } else {
-        alert('Sorry, that response is incorrect. Please try again or return the HIT.')
+        alert('Sorry, that response is incorrect. Please try again or return the experiment to Prolific.')
       }
 
     };
@@ -171,8 +184,8 @@ jsPsych.plugins["audio-test"] = (function() {
 			// stop the audio file if it is playing
 			// remove end event listeners if they exist
 			if(context !== null){
-				source.stop();
-				source.onended = function() { }
+        audio.stop();
+				audio.onended = function() { }
 			} else {
 				audio.pause();
 				audio.removeEventListener('ended', end_trial);
@@ -184,7 +197,8 @@ jsPsych.plugins["audio-test"] = (function() {
       // gather the data to store for the trial
       var trial_data = {
         "rt": response.rt,
-        "stimulus": trial.stimulus
+        "stimulus": trial.stimulus,
+        "button_pressed": response.button
       };
 
       // clear the display
